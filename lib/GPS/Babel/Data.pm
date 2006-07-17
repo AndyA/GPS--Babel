@@ -1,18 +1,14 @@
-package GPS::Babel;
+package GPS::Babel::Data;
 
 use warnings;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.3');
-
-use XML::Parser;
-use XML::Generator ':pretty';
-use File::Which qw(which);
-use IO::Pipe;
-use GPS::Babel::Data;
-
-my $EXENAME = 'gpsbabel';
+# use XML::Parser;
+# use XML::Generator ':pretty';
+# use File::Which qw(which);
+# use IO::Handle;
+# use GPS::Babel::Data;
 
 # Module implementation here
 
@@ -22,31 +18,10 @@ sub new {
 	my $class   = ref($proto) || $proto;
 
 	my $self = {
-	    exe     => $opts{exe}       || which($EXENAME),
-	    in_fmt  => $opts{in_fmt}    || 'gpx',
-	    out_fmt => $opts{out_fmt}   || 'gpx'
+#	    exe => $opts{exe} || which($EXENAME);
     };
     
 	return bless $self, $class;
-}
-
-sub read {
-    my $self = shift;
-    my %opts = @_;
-    $opts{fmt} ||= $self->{in_fmt};
-    my $name = $opts{name} || die "Must supply the name of a file to read\n";
-    my @args = ($self->{exe}, qw(-r -w -t -i), 
-                $opts{fmt}, '-f', $name, 
-                qw(-o gpx -F -));
-    print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->reader(@args);
-    my $ln = $fh->getline();
-    while ($ln) {
-        print $ln;
-        $ln = $fh->getline();
-    }
-    $fh->close();
 }
 
 1; # Magic true value required at end of module

@@ -9,8 +9,12 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/GPS/Babel.pm',
     PL_FILES            => {},
     PREREQ_PM => {
-        'Test::More' => 0,
-        'version'    => 0,
+        'Test::More'        => 0,
+        'version'           => 0,
+        'XML::Parser'       => 0,
+        'XML::Generator'    => 0,
+        'File::Which'       => 0,
+        'IO::Pipe'          => 0
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'GPS-Babel-*' },
