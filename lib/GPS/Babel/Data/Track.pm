@@ -10,11 +10,22 @@ our @ISA = qw(GPS::Babel::Data::Object);
 sub new {
     my ($proto, @args) = @_;
 
-    print "GPS::Babel::Data::Track->new()\n";
+    #print "GPS::Babel::Data::Track->new()\n";
 
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@args);
 	return bless $self, $class;
+}
+
+sub add_child {
+    my ($self, $path, $name, $obj) = @_;
+    $self->SUPER::add_child($path, $name, $obj);
+    if ($name eq 'trkseg') {
+        push @{$self->{segments}}, $obj;
+    } else {
+        print "*** Warning - unhandled object at $name\n";
+    }
+    push @{$self->{children}}, $obj;
 }
 
 1; # Magic true value required at end of module

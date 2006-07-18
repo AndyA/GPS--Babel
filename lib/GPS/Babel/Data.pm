@@ -28,7 +28,7 @@ our @ISA = qw(GPS::Babel::Data::Object);
 sub new {
     my ($proto, @args) = @_;
 
-    print "GPS::Babel::Data->new()\n";
+    #print "GPS::Babel::Data->new()\n";
 
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@args);
@@ -62,7 +62,7 @@ sub read_from_gpx {
     my $char_handler = sub {
         my ($expat, $text) = @_;
         my $path = join('/', @path);
-        print "$path/text: $text\n";
+        #print "$path/text: $text\n";
         if (@text) {
             $text[-1] .= $text;
         }
@@ -93,7 +93,7 @@ sub read_from_gpx {
 
         push @text, '';
         
-        print "start: $path (" . join(', ', @at) . ")\n";
+        #print "start: $path (" . join(', ', @at) . ")\n";
     };
     
     my $end_handler = sub {
@@ -107,13 +107,14 @@ sub read_from_gpx {
 
         my $val = pop @text;
         
-        print "end: $path\n";
+        #print "end: $path\n";
 
         if ($path_map{$path}) {
             # Must have created an object
             my $obj = pop @work;
             my $top = $work[-1];
-            $top->[1]->add_child($path, $obj->[1]);
+            my $kpath = join('/', @path[$top->[0] .. $#path]);
+            $top->[1]->add_child($path, $kpath, $obj->[1]);
         } else {
             my $top = $work[-1];
             my $kpath = join('/', @path[$top->[0] .. $#path]);
@@ -145,6 +146,25 @@ sub read_from_gpx {
     #     print $ln;
     #     $ln = $fh->getline();
     # }
+}
+
+# Subclass add_child to stash our attributes into friendly places
+
+sub add_child {
+    my ($self, $path, $name, $obj) = @_;
+    $self->SUPER::add_child($path, $name, $obj);
+    if ($name eq 'gpx/bounds') {
+        $self->{bounds} = $obj;
+    } elsif ($name eq 'gpx/wpt') {
+        push @{$self->{waypoints}}, $obj;
+    } elsif ($name eq 'gpx/rte') {
+        push @{$self->{routes}}, $obj;
+    } elsif ($name eq 'gpx/trk') {
+        push @{$self->{tracks}}, $obj;
+    } else {
+        print "*** Warning - unhandled object at $name\n";
+    }
+    push @{$self->{children}}, $obj;
 }
 
 1; # Magic true value required at end of module

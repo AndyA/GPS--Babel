@@ -10,7 +10,7 @@ our @ISA = qw(GPS::Babel::Data::Object);
 sub new {
     my ($proto, @args) = @_;
 
-    print "GPS::Babel::Data::Waypoint->new()\n";
+    #print "GPS::Babel::Data::Waypoint->new()\n";
 
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@args);

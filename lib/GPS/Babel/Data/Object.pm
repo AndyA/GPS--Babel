@@ -8,7 +8,7 @@ sub new {
     my $proto   = shift;
 	my $class   = ref($proto) || $proto;
 
-    print "GPS::Babel::Data::Object->new()\n";
+    #print "GPS::Babel::Data::Object->new()\n";
 
 	my $self = {
 	    attr        => { },
@@ -19,14 +19,14 @@ sub new {
 }
 
 sub add_child {
-    my ($self, $path, $obj) = @_;
-    # TODO: Handle multiple types of children?
+    my ($self, $path, $name, $obj) = @_;
+    #print "add_child($self, \"$path\", \"$name\", $obj)\n";
     push @{$self->{children}}, $obj;
 }
 
 sub set_attr {
     my ($self, $path, $name, $value) = @_;
-    print "($path) $name = $value\n";
+    #print "set_attr($self, \"$path\", \"$name\", \"$value\")\n";
     $self->{attr}->{$name} = $value;
 }
 
