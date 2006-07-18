@@ -1,16 +1,16 @@
-package GPS::Babel::Data::Waypoint;
+package GPS::GPSBabel::Point;
 
 use warnings;
 use strict;
 use Carp;
-use GPS::Babel::Data::Object;
+use GPS::GPSBabel::Object;
 
-our @ISA = qw(GPS::Babel::Data::Object);
+our @ISA = qw(GPS::GPSBabel::Object);
 
 sub new {
     my ($proto, @args) = @_;
 
-    #print "GPS::Babel::Data::Waypoint->new()\n";
+    #print "GPS::GPSBabel::Point->new()\n";
 
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@args);
@@ -22,17 +22,17 @@ __END__
 
 =head1 NAME
 
-GPS::Babel - [One line description of module's purpose here]
+GPS::GPSBabel - [One line description of module's purpose here]
 
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.1
+This document describes GPS::GPSBabel version 0.0.1
 
 
 =head1 SYNOPSIS
 
-    use GPS::Babel;
+    use GPS::GPSBabel;
 
 =for author to fill in:
     Brief code example(s) here showing commonest usage(s).
@@ -88,7 +88,7 @@ This document describes GPS::Babel version 0.0.1
     that can be set. These descriptions must also include details of any
     configuration language used.
   
-GPS::Babel requires no configuration files or environment variables.
+GPS::GPSBabel requires no configuration files or environment variables.
 
 
 =head1 DEPENDENCIES
