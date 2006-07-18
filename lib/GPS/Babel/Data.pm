@@ -6,16 +6,16 @@ use Carp;
 
 use XML::Parser;
 
-use GPS::Babel::Data::Object;
-use GPS::Babel::Data::Waypoint;
-use GPS::Babel::Data::Route;
-use GPS::Babel::Data::Routepoint;
-use GPS::Babel::Data::Track;
-use GPS::Babel::Data::Tracksegment;
-use GPS::Babel::Data::Trackpoint;
-use GPS::Babel::Data::Bounds;
+use GPS::Babel::Object;
+use GPS::Babel::Waypoint;
+use GPS::Babel::Route;
+use GPS::Babel::Routepoint;
+use GPS::Babel::Track;
+use GPS::Babel::Tracksegment;
+use GPS::Babel::Trackpoint;
+use GPS::Babel::Bounds;
 
-our @ISA = qw(GPS::Babel::Data::Object);
+our @ISA = qw(GPS::Babel::Object);
 
 # use XML::Parser;
 # use XML::Generator ':pretty';
@@ -43,20 +43,20 @@ sub read_from_gpx {
     
     # Stack of objects being built. The top of stack is the
     # innermost object
-    my @work = ( [0, $self] );
+    my @work = ( [1, $self] );
     my @text = ( );
     
     my %unk = ( );
 
     # Maps gpx path to GPS::Babel::Data class.
     my %path_map = (
-        'gpx/wpt'               => 'GPS::Babel::Data::Waypoint',
-        'gpx/rte'               => 'GPS::Babel::Data::Route',
-        'gpx/rte/rtept'         => 'GPS::Babel::Data::Routepoint',
-        'gpx/trk'               => 'GPS::Babel::Data::Track',
-        'gpx/trk/trkseg'        => 'GPS::Babel::Data::Tracksegment',
-        'gpx/trk/trkseg/trkpt'  => 'GPS::Babel::Data::Trackpoint',
-        'gpx/bounds'            => 'GPS::Babel::Data::Bounds',
+        'gpx/wpt'               => 'GPS::Babel::Waypoint',
+        'gpx/rte'               => 'GPS::Babel::Route',
+        'gpx/rte/rtept'         => 'GPS::Babel::Routepoint',
+        'gpx/trk'               => 'GPS::Babel::Track',
+        'gpx/trk/trkseg'        => 'GPS::Babel::Tracksegment',
+        'gpx/trk/trkseg/trkpt'  => 'GPS::Babel::Trackpoint',
+        'gpx/bounds'            => 'GPS::Babel::Bounds',
     );
     
     my $char_handler = sub {
@@ -118,7 +118,8 @@ sub read_from_gpx {
         } else {
             my $top = $work[-1];
             my $kpath = join('/', @path[$top->[0] .. $#path]);
-            $top->[1]->set_attr($path, $kpath, $val);
+            my $obj = $top->[1];
+            $obj->set_attr($path, $kpath, $obj->from_gpx($path, $kpath, $val));
         }
         
         my $celem = pop @path;
@@ -153,13 +154,13 @@ sub read_from_gpx {
 sub add_child {
     my ($self, $path, $name, $obj) = @_;
     $self->SUPER::add_child($path, $name, $obj);
-    if ($name eq 'gpx/bounds') {
-        $self->{bounds} = $obj;
-    } elsif ($name eq 'gpx/wpt') {
+    if ($name eq 'bounds') {
+        $self->{attr}->{bounds} = $obj;
+    } elsif ($name eq 'wpt') {
         push @{$self->{waypoints}}, $obj;
-    } elsif ($name eq 'gpx/rte') {
+    } elsif ($name eq 'rte') {
         push @{$self->{routes}}, $obj;
-    } elsif ($name eq 'gpx/trk') {
+    } elsif ($name eq 'trk') {
         push @{$self->{tracks}}, $obj;
     } else {
         print "*** Warning - unhandled object at $name\n";

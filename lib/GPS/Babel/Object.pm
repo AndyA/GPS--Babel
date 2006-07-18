@@ -1,14 +1,17 @@
-package GPS::Babel::Data::Object;
+package GPS::Babel::Object;
 
 use warnings;
 use strict;
 use Carp;
+use Time::Local;
+
+our $AUTOLOAD;
 
 sub new {
     my $proto   = shift;
 	my $class   = ref($proto) || $proto;
 
-    #print "GPS::Babel::Data::Object->new()\n";
+    #print "GPS::Babel::Object->new()\n";
 
 	my $self = {
 	    attr        => { },
@@ -17,6 +20,24 @@ sub new {
     
 	return bless $self, $class;
 }
+
+# Automatically provide accessor methods named after
+# fields.
+# sub AUTOLOAD {
+# 	my $self = shift;
+# 	my $type = ref($self)
+# 		    or croak "$self is not an object";
+# 
+# 	my $name = $AUTOLOAD;
+# 
+# 	$name =~ s/.*://;   # strip fully-qualified portion
+# 
+# 	if (@_) {
+# 	    return $self->{attr}->{$name} = shift;
+# 	} else {
+# 	    return $self->{attr}->{$name};
+# 	}
+# }
 
 sub add_child {
     my ($self, $path, $name, $obj) = @_;
@@ -36,6 +57,48 @@ sub tidy_text {
     $str =~ s/\s+$//;
     $str =~ s/\s+/ /g;
     return $str;
+}
+
+sub from_gpx_time {
+    my ($self, $tm) = @_;
+    
+    unless ($tm =~ /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/) {
+        die "Badly formatted time: $tm\n";
+    }
+
+    my ($yr, $mo, $da, $hr, $mi, $se) = ($1, $2, $3, $4, $5, $6);
+
+    return timegm($se, $mi, $hr, $da, $mo-1, $yr);
+}
+
+sub to_gpx_time {
+    my ($self, $tm) = @_;
+    
+    my ($se, $mi, $hr, $da, $mo, $yr) = gmtime($tm);
+    return sprintf("%04d-%02d-%02dT%02d:%02d:%02dZ",
+                        $yr, $mo + 1, $da, $hr, $mi, $se);
+}
+
+# Subclass to provide per-object conversion semantics
+
+sub from_gpx {
+    my ($self, $path, $name, $val) = @_;
+    #print "$path, $name, $val\n";
+    die unless defined $name;
+    if ($name eq 'time') {
+        return $self->from_gpx_time($val);
+    } else {
+        return $val;
+    }
+}
+
+sub to_gpx {
+    my ($self, $path, $name, $val) = @_;
+    if ($name eq 'time') {
+        return $self->to_gpx_time($val);
+    } else {
+        return $val;
+    }
 }
 
 1; # Magic true value required at end of module
