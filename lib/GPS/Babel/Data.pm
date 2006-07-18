@@ -4,6 +4,19 @@ use warnings;
 use strict;
 use Carp;
 
+use XML::Parser;
+
+use GPS::Babel::Data::Object;
+use GPS::Babel::Data::Waypoint;
+use GPS::Babel::Data::Route;
+use GPS::Babel::Data::Routepoint;
+use GPS::Babel::Data::Track;
+use GPS::Babel::Data::Tracksegment;
+use GPS::Babel::Data::Trackpoint;
+use GPS::Babel::Data::Bounds;
+
+our @ISA = qw(GPS::Babel::Data::Object);
+
 # use XML::Parser;
 # use XML::Generator ':pretty';
 # use File::Which qw(which);
@@ -13,15 +26,125 @@ use Carp;
 # Module implementation here
 
 sub new {
-    my $proto   = shift;
-    my %opts    = @_;
-	my $class   = ref($proto) || $proto;
+    my ($proto, @args) = @_;
 
-	my $self = {
-#	    exe => $opts{exe} || which($EXENAME);
+    print "GPS::Babel::Data->new()\n";
+
+    my $class = ref($proto) || $proto;
+    my $self = $class->SUPER::new(@args);
+	return bless $self, $class;
+}
+
+sub read_from_gpx {
+    my ($self, $fh) = @_;
+    
+    my $p = XML::Parser->new();
+    my @path = ( );
+    
+    # Stack of objects being built. The top of stack is the
+    # innermost object
+    my @work = ( [0, $self] );
+    my @text = ( );
+    
+    my %unk = ( );
+
+    # Maps gpx path to GPS::Babel::Data class.
+    my %path_map = (
+        'gpx/wpt'               => 'GPS::Babel::Data::Waypoint',
+        'gpx/rte'               => 'GPS::Babel::Data::Route',
+        'gpx/rte/rtept'         => 'GPS::Babel::Data::Routepoint',
+        'gpx/trk'               => 'GPS::Babel::Data::Track',
+        'gpx/trk/trkseg'        => 'GPS::Babel::Data::Tracksegment',
+        'gpx/trk/trkseg/trkpt'  => 'GPS::Babel::Data::Trackpoint',
+        'gpx/bounds'            => 'GPS::Babel::Data::Bounds',
+    );
+    
+    my $char_handler = sub {
+        my ($expat, $text) = @_;
+        my $path = join('/', @path);
+        print "$path/text: $text\n";
+        if (@text) {
+            $text[-1] .= $text;
+        }
     };
     
-	return bless $self, $class;
+    my $start_handler = sub {
+        my ($expat, $elem, %attr) = @_;
+        push @path, $elem;
+
+        my @at = ( );
+        push @at, $_ . ' => ' . $attr{$_} for sort keys %attr;
+
+        my $path = join('/', @path);
+        if (my $cls = $path_map{$path}) {
+            my $con = $cls . '::new';
+            no strict 'refs';
+            # Construct object
+            my $obj = $con->($cls);
+            for (keys %attr) {
+                $obj->set_attr($path, $_, $attr{$_});
+            }
+            
+            push @work, [ scalar(@path), $obj ];
+        } else {
+            # Should do something with attributes
+            $unk{$path}++;
+        }
+
+        push @text, '';
+        
+        print "start: $path (" . join(', ', @at) . ")\n";
+    };
+    
+    my $end_handler = sub {
+        my ($expat, $elem) = @_;
+        
+        my $path = join('/', @path);
+        #my $val = $self->tidy_text(pop @text);
+
+        die "Text stack empty\n"
+            unless @text;
+
+        my $val = pop @text;
+        
+        print "end: $path\n";
+
+        if ($path_map{$path}) {
+            # Must have created an object
+            my $obj = pop @work;
+            my $top = $work[-1];
+            $top->[1]->add_child($path, $obj->[1]);
+        } else {
+            my $top = $work[-1];
+            my $kpath = join('/', @path[$top->[0] .. $#path]);
+            $top->[1]->set_attr($path, $kpath, $val);
+        }
+        
+        my $celem = pop @path;
+        die "Unmatched $elem\n"
+            unless $celem eq $elem;
+
+            
+    };
+    
+    $p->setHandlers(
+        Char    => $char_handler,
+        Start   => $start_handler,
+        End     => $end_handler
+    );
+
+    $p->parse($fh);
+    
+    print "Unhandled keys:\n";
+    for (sort keys %unk) {
+        print "$_\n";
+    }
+    #     
+    # my $ln = $fh->getline();
+    # while ($ln) {
+    #     print $ln;
+    #     $ln = $fh->getline();
+    # }
 }
 
 1; # Magic true value required at end of module

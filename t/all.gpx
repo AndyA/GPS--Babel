@@ -10,8 +10,8 @@ xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/
 <wpt lat="46.029489931" lon="11.825879086">
   <ele>1400.000000</ele>
   <name>F01140</name>
-  <cmt>DECOLLO MONTE AVENA</cmt>
-  <desc>DECOLLO MONTE AVENA</desc>
+  <cmt>DECOLLO MONTE AVENA &lt;&gt;</cmt>
+  <desc><![CDATA[DECOLLO MONTE AVENA & ting]]></desc>
   <sym>Waypoint</sym>
 </wpt>
 <wpt lat="46.008626612" lon="11.860931698">

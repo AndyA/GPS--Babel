@@ -1,49 +1,41 @@
-package GPS::Babel;
+package GPS::Babel::Data::Object;
 
 use warnings;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.3');
-
-use XML::Generator ':pretty';
-use File::Which qw(which);
-use IO::Pipe;
-use GPS::Babel::Data;
-
-my $EXENAME = 'gpsbabel';
-
-# Module implementation here
-
 sub new {
     my $proto   = shift;
-    my %opts    = @_;
 	my $class   = ref($proto) || $proto;
 
+    print "GPS::Babel::Data::Object->new()\n";
+
 	my $self = {
-	    exe     => $opts{exe}       || which($EXENAME),
-	    in_fmt  => $opts{in_fmt}    || 'gpx',
-	    out_fmt => $opts{out_fmt}   || 'gpx'
+	    attr        => { },
+	    children    => [ ]
     };
     
 	return bless $self, $class;
 }
 
-sub read {
-    my $self = shift;
-    my %opts = @_;
-    $opts{fmt} ||= $self->{in_fmt};
-    my $name = $opts{name} || die "Must supply the name of a file to read\n";
-    my @args = ($self->{exe}, qw(-r -w -t -i), 
-                $opts{fmt}, '-f', $name, 
-                qw(-o gpx -F -));
-    print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->reader(@args);
-    my $data = GPS::Babel::Data->new();
-    $data->read_from_gpx($fh);
-    $fh->close();
-    return $data;
+sub add_child {
+    my ($self, $path, $obj) = @_;
+    # TODO: Handle multiple types of children?
+    push @{$self->{children}}, $obj;
+}
+
+sub set_attr {
+    my ($self, $path, $name, $value) = @_;
+    print "($path) $name = $value\n";
+    $self->{attr}->{$name} = $value;
+}
+
+sub tidy_text {
+    my ($self, $str) = @_;
+    $str =~ s/^\s+//;
+    $str =~ s/\s+$//;
+    $str =~ s/\s+/ /g;
+    return $str;
 }
 
 1; # Magic true value required at end of module

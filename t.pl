@@ -9,6 +9,7 @@ use strict;
 use lib qw(lib);
 use GPS::Babel;
 use GPS::Babel::Data;
+use Data::Dumper;
 
 $| = 1;
 
@@ -16,3 +17,4 @@ my $babel = GPS::Babel->new();
 
 my $data  = $babel->read('name' => 't/all.gpx', 'fmt' => 'gpx');
 
+print Dumper($data);
