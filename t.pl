@@ -12,6 +12,11 @@ use Data::Dumper;
 
 $| = 1;
 
+$SIG{PIPE} = sub {
+	my $name = shift;
+	die "Somebody sent me a SIG$name";
+};
+
 # We only need a single GPS::Babel object
 my $babel = GPS::Babel->new();
 
@@ -102,7 +107,7 @@ $data->waypoints->append($data->routes->all_points);
 iterate($data->all_nodes, 'All nodes');
 
 # Write new data - again all gpsbabel formats are supported
-$babel->write($data, 'name' => 'synth.gpx', 'fmt' => 'gpx2');
+$babel->write($data, 'name' => 'synth.gpx', 'fmt' => 'gpx');
 
 #print Dumper($dup);
 

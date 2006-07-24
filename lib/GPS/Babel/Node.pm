@@ -189,6 +189,12 @@ sub write_contents_as_gpx {
     $self->item->write_as_gpx($fh, $indent, $path);
 }
 
+sub write_str {
+    my $self = shift;
+    my $fh   = shift;
+    $fh->print(@_) or croak "Write error ($!)";
+}
+
 sub write_as_gpx {
     my ($self, $fh, $indent, $path, @exc) = @_;
     my $elem;
@@ -216,12 +222,12 @@ sub write_as_gpx {
     }
     $fh->print($pad, $self->open_tag($elem, \%attr), "\n");
     while (my($n, $v) = each(%item)) {
-        $fh->print($pad, $spc, $self->open_tag($n));
-        $fh->print(encode_entities($self->to_gpx($n, $v)));
-        $fh->print($self->close_tag($n), "\n");
+        $self->write_str($fh, $pad, $spc, $self->open_tag($n));
+        $self->write_str($fh, encode_entities($self->to_gpx($n, $v)));
+        $self->write_str($fh, $self->close_tag($n), "\n");
     }
     $self->write_contents_as_gpx($fh, $indent + 1, $path);
-    $fh->print($pad, $self->close_tag($elem), "\n");
+    $self->write_str($fh, $pad, $self->close_tag($elem), "\n");
 }
 
 1; # Magic true value required at end of module

@@ -45,6 +45,7 @@ sub read {
     my $data = GPS::Babel::Data->new();
     $data->read_from_gpx($fh);
     $fh->close();
+    croak "gpsbabel failed with exit code " . ($?>>8) if $?;
     return $data;
 }
 
@@ -63,7 +64,8 @@ sub write {
     my $fh = IO::Pipe->new();
     $fh->writer(@args);
     $data->write_as_gpx($fh);
-    $fh->close();
+    $fh->close() or croak "Write error ($!)";
+    croak "gpsbabel failed with exit code " . ($?>>8) if $?;
 }
 
 # TODO: Add interface that allows data to be piped through gpsbabel filters
@@ -137,11 +139,11 @@ instance of gpsbabel that should be used.
 =item read( name => filename, fmt => input_format )
 
 Read data from a file. Returns a
-L<GPS::Babel::Data|GPS::Babel::Data> object.
+L<GPS::Babel::Data|GPS::Babel::Data> object. The C<fmt> option may be any data format supported by gpsbabel.
 
 =item write( L<GPS::Babel::Data|GPS::Babel::Data>, name => filename, fmt => output_format )
 
-Write data to a file.
+Write data to a file. Any format supported by gpsbabel may be used.
 
 =head1 DIAGNOSTICS
 
