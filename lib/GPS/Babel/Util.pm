@@ -1,171 +1,33 @@
-package GPS::Babel::Data;
+package GPS::Babel::Util;
 
 use warnings;
 use strict;
 use Carp;
+use Scalar::Util qw(blessed);
 
-use XML::Parser;
-
-use GPS::Babel::Object;
-use GPS::Babel::Waypoint;
-use GPS::Babel::Route;
-use GPS::Babel::Routepoint;
-use GPS::Babel::Track;
-use GPS::Babel::Tracksegment;
-use GPS::Babel::Trackpoint;
-use GPS::Babel::Bounds;
-
-our @ISA = qw(GPS::Babel::Object);
-
-# use XML::Parser;
-# use XML::Generator ':pretty';
-# use File::Which qw(which);
-# use IO::Handle;
-# use GPS::Babel::Data;
-
-# Module implementation here
-
-sub new {
-    my ($proto, @args) = @_;
-
-    #print "GPS::Babel::Data->new()\n";
-
-    my $class = ref($proto) || $proto;
-    my $self = $class->SUPER::new(@args);
-	return bless $self, $class;
-}
-
-sub read_from_gpx {
-    my ($self, $fh) = @_;
-    
-    my $p = XML::Parser->new();
-    my @path = ( );
-    
-    # Stack of objects being built. The top of stack is the
-    # innermost object
-    my @work = ( [1, $self] );
-    my @text = ( );
-    
-    my %unk = ( );
-
-    # Maps gpx path to GPS::Babel::Data class.
-    my %path_map = (
-        'gpx/wpt'               => 'GPS::Babel::Waypoint',
-        'gpx/rte'               => 'GPS::Babel::Route',
-        'gpx/rte/rtept'         => 'GPS::Babel::Routepoint',
-        'gpx/trk'               => 'GPS::Babel::Track',
-        'gpx/trk/trkseg'        => 'GPS::Babel::Tracksegment',
-        'gpx/trk/trkseg/trkpt'  => 'GPS::Babel::Trackpoint',
-        'gpx/bounds'            => 'GPS::Babel::Bounds',
-    );
-    
-    my $char_handler = sub {
-        my ($expat, $text) = @_;
-        my $path = join('/', @path);
-        #print "$path/text: $text\n";
-        if (@text) {
-            $text[-1] .= $text;
-        }
-    };
-    
-    my $start_handler = sub {
-        my ($expat, $elem, %attr) = @_;
-        push @path, $elem;
-
-        my @at = ( );
-        push @at, $_ . ' => ' . $attr{$_} for sort keys %attr;
-
-        my $path = join('/', @path);
-        if (my $cls = $path_map{$path}) {
-            my $con = $cls . '::new';
-            no strict 'refs';
-            # Construct object
-            my $obj = $con->($cls);
-            for (keys %attr) {
-                $obj->set_attr($path, $_, $attr{$_});
+sub massage_coordinates {
+    my @a = ( );
+    while (@_) {
+        if (@_ >= 2 && !ref($_[0]) && !ref($_[1])) {
+            # Two scalars - must be lat, lon
+            push @a, { lat => $_[0], lon => $_[1] };
+            splice @_, 2;
+        } elsif (my $ref = ref($_[0])) {
+            if ($ref eq 'ARRAY') {
+                my $ar = shift;
+                push @a, { lat => $ar->[0], lon => $ar->[1] };
+            } elsif ($ref eq 'HASH') {
+                push @a, shift;
+            } elsif (blessed($_[0]) && $_[0]->isa('GPS::Babel::Point')) {
+                push @a, shift;
+            } else {
+                croak "Can't get a position from a $ref";
             }
-            
-            push @work, [ scalar(@path), $obj ];
         } else {
-            # Should do something with attributes
-            $unk{$path}++;
+            croak "Can't parse args as coordinates";
         }
-
-        push @text, '';
-        
-        #print "start: $path (" . join(', ', @at) . ")\n";
-    };
-    
-    my $end_handler = sub {
-        my ($expat, $elem) = @_;
-        
-        my $path = join('/', @path);
-        #my $val = $self->tidy_text(pop @text);
-
-        die "Text stack empty\n"
-            unless @text;
-
-        my $val = pop @text;
-        
-        #print "end: $path\n";
-
-        if ($path_map{$path}) {
-            # Must have created an object
-            my $obj = pop @work;
-            my $top = $work[-1];
-            my $kpath = join('/', @path[$top->[0] .. $#path]);
-            $top->[1]->add_child($path, $kpath, $obj->[1]);
-        } else {
-            my $top = $work[-1];
-            my $kpath = join('/', @path[$top->[0] .. $#path]);
-            my $obj = $top->[1];
-            $obj->set_attr($path, $kpath, $obj->from_gpx($path, $kpath, $val));
-        }
-        
-        my $celem = pop @path;
-        die "Unmatched $elem\n"
-            unless $celem eq $elem;
-
-            
-    };
-    
-    $p->setHandlers(
-        Char    => $char_handler,
-        Start   => $start_handler,
-        End     => $end_handler
-    );
-
-    $p->parse($fh);
-    
-    print "Unhandled keys:\n";
-    for (sort keys %unk) {
-        print "$_\n";
     }
-    #     
-    # my $ln = $fh->getline();
-    # while ($ln) {
-    #     print $ln;
-    #     $ln = $fh->getline();
-    # }
-}
-
-# Subclass add_child to stash our attributes into friendly places
-
-sub add_child {
-    my ($self, $path, $name, $obj) = @_;
-    $self->SUPER::add_child($path, $name, $obj);
-    if ($name eq 'bounds') {
-        $self->{attr}->{bounds} = $obj;
-    } elsif ($name eq 'wpt') {
-        push @{$self->{waypoints}}, $obj;
-    } elsif ($name eq 'rte') {
-        push @{$self->{routes}}, $obj;
-    } elsif ($name eq 'trk') {
-        push @{$self->{tracks}}, $obj;
-    } else {
-        print "*** Warning - unhandled object at $name\n";
-    }
-    push @{$self->{children}}, $obj;
+    return @a;
 }
 
 1; # Magic true value required at end of module

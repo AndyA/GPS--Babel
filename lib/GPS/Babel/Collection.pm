@@ -1,104 +1,66 @@
-package GPS::Babel::Object;
+package GPS::Babel::Collection;
 
 use warnings;
 use strict;
 use Carp;
-use Time::Local;
+use GPS::Babel::Node;
+use GPS::Babel::Object;
+use GPS::Babel::Iterator;
+use Scalar::Util qw(blessed);
 
-our $AUTOLOAD;
+our @ISA = qw(GPS::Babel::Object);
 
 sub new {
-    my $proto   = shift;
-	my $class   = ref($proto) || $proto;
-
-    #print "GPS::Babel::Object->new()\n";
-
-	my $self = {
-	    attr        => { },
-	    children    => [ ]
-    };
-    
-	return bless $self, $class;
+    my ($proto, @args) = @_;
+    my $class = ref($proto) || $proto;
+    my $self = bless [ ], $class;
+    $self->add($_) for @args;
+	return $self;
 }
 
-# Automatically provide accessor methods named after
-# fields.
-# sub AUTOLOAD {
-# 	my $self = shift;
-# 	my $type = ref($self)
-# 		    or croak "$self is not an object";
-# 
-# 	my $name = $AUTOLOAD;
-# 
-# 	$name =~ s/.*://;   # strip fully-qualified portion
-# 
-# 	if (@_) {
-# 	    return $self->{attr}->{$name} = shift;
-# 	} else {
-# 	    return $self->{attr}->{$name};
-# 	}
-# }
-
-sub add_child {
-    my ($self, $path, $name, $obj) = @_;
-    #print "add_child($self, \"$path\", \"$name\", $obj)\n";
-    push @{$self->{children}}, $obj;
-}
-
-sub set_attr {
-    my ($self, $path, $name, $value) = @_;
-    #print "set_attr($self, \"$path\", \"$name\", \"$value\")\n";
-    $self->{attr}->{$name} = $value;
-}
-
-sub tidy_text {
-    my ($self, $str) = @_;
-    $str =~ s/^\s+//;
-    $str =~ s/\s+$//;
-    $str =~ s/\s+/ /g;
-    return $str;
-}
-
-sub from_gpx_time {
-    my ($self, $tm) = @_;
-    
-    unless ($tm =~ /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/) {
-        die "Badly formatted time: $tm\n";
+sub clone {
+    my $self = shift;
+    my $new  = [ ];
+    for (@{$self}) {
+        push @{$new}, GPS::Babel::Node::clone_object($_);
     }
-
-    my ($yr, $mo, $da, $hr, $mi, $se) = ($1, $2, $3, $4, $5, $6);
-
-    return timegm($se, $mi, $hr, $da, $mo-1, $yr);
+    return bless $new, ref($self);
 }
 
-sub to_gpx_time {
-    my ($self, $tm) = @_;
-    
-    my ($se, $mi, $hr, $da, $mo, $yr) = gmtime($tm);
-    return sprintf("%04d-%02d-%02dT%02d:%02d:%02dZ",
-                        $yr, $mo + 1, $da, $hr, $mi, $se);
+sub add {
+    my $self = shift;
+    push @{$self}, @_;
 }
 
-# Subclass to provide per-object conversion semantics
+sub count {
+    my $self = shift;
+    return scalar(@{$self});
+}
 
-sub from_gpx {
-    my ($self, $path, $name, $val) = @_;
-    #print "$path, $name, $val\n";
-    die unless defined $name;
-    if ($name eq 'time') {
-        return $self->from_gpx_time($val);
-    } else {
-        return $val;
+sub empty {
+    my $self = shift;
+    splice @{$self};
+}
+
+sub all_points {
+    my $self = shift;
+    return GPS::Babel::Iterator->new_for_array($self);
+}
+
+sub write_as_gpx {
+    my ($self, $fh, $indent, $path) = @_;
+    for my $nd (@{$self}) {
+        $nd->write_as_gpx($fh, $indent, $path);
     }
 }
 
-sub to_gpx {
-    my ($self, $path, $name, $val) = @_;
-    if ($name eq 'time') {
-        return $self->to_gpx_time($val);
-    } else {
-        return $val;
-    }
+sub as_array {
+    my $self = shift;
+    return @{$self};
+}
+
+sub check_homogenous {
+
 }
 
 1; # Magic true value required at end of module

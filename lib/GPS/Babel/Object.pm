@@ -1,49 +1,71 @@
-package GPS::Babel;
+package GPS::Babel::Object;
 
 use warnings;
 use strict;
 use Carp;
+use Time::Local;
+use Scalar::Util qw(blessed);
 
-use version; our $VERSION = qv('0.0.3');
-
-use XML::Generator ':pretty';
-use File::Which qw(which);
-use IO::Pipe;
-use GPS::Babel::Data;
-
-my $EXENAME = 'gpsbabel';
-
-# Module implementation here
-
-sub new {
-    my $proto   = shift;
-    my %opts    = @_;
-	my $class   = ref($proto) || $proto;
-
-	my $self = {
-	    exe     => $opts{exe}       || which($EXENAME),
-	    in_fmt  => $opts{in_fmt}    || 'gpx',
-	    out_fmt => $opts{out_fmt}   || 'gpx'
-    };
-    
-	return bless $self, $class;
+sub append {
+    my $self = shift;
+    for my $a (@_) {
+        if (my $ref = ref($a)) {
+            if ($ref eq 'ARRAY') {
+                $self->add(@{$a});
+            } elsif (blessed($a) && $a->can('as_array')) {
+                $self->add($a->as_array);
+            } else {
+                croak "can't append a $ref";
+            }
+        } else {
+            $self->add($a);
+        }
+    }
 }
 
-sub read {
-    my $self = shift;
-    my %opts = @_;
-    $opts{fmt} ||= $self->{in_fmt};
-    my $name = $opts{name} || die "Must supply the name of a file to read\n";
-    my @args = ($self->{exe}, qw(-r -w -t -i), 
-                $opts{fmt}, '-f', $name, 
-                qw(-o gpx -F -));
-    print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->reader(@args);
-    my $data = GPS::Babel::Data->new();
-    $data->read_from_gpx($fh);
-    $fh->close();
-    return $data;
+sub as_array {
+    return shift;
+}
+
+sub from_gpx_time {
+    my ($self, $tm) = @_;
+    
+    unless ($tm =~ /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/) {
+        confess "Badly formatted time: $tm";
+    }
+
+    my ($yr, $mo, $da, $hr, $mi, $se) = ($1, $2, $3, $4, $5, $6);
+
+    return timegm($se, $mi, $hr, $da, $mo-1, $yr);
+}
+
+sub to_gpx_time {
+    my ($self, $tm) = @_;
+    
+    my ($se, $mi, $hr, $da, $mo, $yr) = gmtime($tm);
+    return sprintf("%04d-%02d-%02dT%02d:%02d:%02dZ",
+                        $yr + 1900, $mo + 1, $da, $hr, $mi, $se);
+}
+
+# Subclass to provide per-object conversion semantics
+
+sub from_gpx {
+    my ($self, $name, $val) = @_;
+    confess unless defined $name;
+    if ($name eq 'time') {
+        return $self->from_gpx_time($val);
+    } else {
+        return $val;
+    }
+}
+
+sub to_gpx {
+    my ($self, $name, $val) = @_;
+    if ($name eq 'time') {
+        return $self->to_gpx_time($val);
+    } else {
+        return $val;
+    }
 }
 
 1; # Magic true value required at end of module
@@ -51,13 +73,11 @@ __END__
 
 =head1 NAME
 
-GPS::Babel - [One line description of module's purpose here]
-
+GPS::Babel::Object - Base class for GPS::Babel objects. Never instantiated directly.
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.1
-
+This document describes GPS::Babel::Object version 0.0.1
 
 =head1 SYNOPSIS
 

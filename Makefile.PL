@@ -11,10 +11,12 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More'        => 0,
         'version'           => 0,
-        'XML::Parser'       => 0,
-        'XML::Generator'    => 0,
+        'Carp'              => 0,
         'File::Which'       => 0,
-        'IO::Pipe'          => 0
+        'HTML::Entities'    => 0,
+        'IO::Pipe'          => 0,
+        'Time::Local'       => 0,
+        'XML::Parser'       => 0
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'GPS-Babel-*' },

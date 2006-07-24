@@ -1,20 +1,24 @@
-package GPS::GPSBabel::Point;
+package GPS::Babel::Point;
 
 use warnings;
 use strict;
 use Carp;
-use GPS::GPSBabel::Object;
+use GPS::Babel::Node;
+use GPS::Babel::Iterator;
 
-our @ISA = qw(GPS::GPSBabel::Object);
+our @ISA = qw(GPS::Babel::Node);
 
 sub new {
     my ($proto, @args) = @_;
 
-    #print "GPS::GPSBabel::Point->new()\n";
-
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@args);
 	return bless $self, $class;
+}
+
+sub all_points {
+    my ($self) = @_;
+    return GPS::Babel::Iterator->new_for_object($self);
 }
 
 1; # Magic true value required at end of module
@@ -22,17 +26,17 @@ __END__
 
 =head1 NAME
 
-GPS::GPSBabel - [One line description of module's purpose here]
+GPS::Babel - [One line description of module's purpose here]
 
 
 =head1 VERSION
 
-This document describes GPS::GPSBabel version 0.0.1
+This document describes GPS::Babel version 0.0.1
 
 
 =head1 SYNOPSIS
 
-    use GPS::GPSBabel;
+    use GPS::Babel;
 
 =for author to fill in:
     Brief code example(s) here showing commonest usage(s).
@@ -88,7 +92,7 @@ This document describes GPS::GPSBabel version 0.0.1
     that can be set. These descriptions must also include details of any
     configuration language used.
   
-GPS::GPSBabel requires no configuration files or environment variables.
+GPS::Babel requires no configuration files or environment variables.
 
 
 =head1 DEPENDENCIES
