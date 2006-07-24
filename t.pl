@@ -12,7 +12,7 @@ use Data::Dumper;
 
 $| = 1;
 
-# We only need a single GPSBabel object
+# We only need a single GPS::Babel object
 my $babel = GPS::Babel->new();
 
 # Read a gpx file. All formats supported by gpsbabel are supported
@@ -102,7 +102,7 @@ $data->waypoints->append($data->routes->all_points);
 iterate($data->all_nodes, 'All nodes');
 
 # Write new data - again all gpsbabel formats are supported
-$babel->write($data, 'name' => 'synth.gpx', 'fmt' => 'gpx');
+$babel->write($data, 'name' => 'synth.gpx', 'fmt' => 'gpx2');
 
 #print Dumper($dup);
 

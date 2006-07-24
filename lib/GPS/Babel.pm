@@ -33,12 +33,15 @@ sub read {
     my %opts = @_;
     my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
     my $name = $opts{name} || croak "Must supply the name of a file to read";
-    my @args = ($self->{exe}, qw(-r -w -t -i), 
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i), 
                 $opts{fmt}, '-f', $name, 
                 qw(-o gpx -F -));
     #print join(' ', @args), "\n";
     my $fh = IO::Pipe->new();
     $fh->reader(@args);
+    croak "gpsbabel failed ($!)"
+        if $fh->eof;
     my $data = GPS::Babel::Data->new();
     $data->read_from_gpx($fh);
     $fh->close();
@@ -53,7 +56,8 @@ sub write {
     my %opts = @_;
     my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
     my $name = $opts{name} || croak "Must supply the name of a file to write";
-    my @args = ($self->{exe}, qw(-r -w -t -i gpx -f - -o),
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i gpx -f - -o),
                 $fmt, '-F', $name);
     #print join(' ', @args), "\n";
     my $fh = IO::Pipe->new();
@@ -79,29 +83,65 @@ This document describes GPS::Babel version 0.0.2
 =head1 SYNOPSIS
 
     use GPS::Babel;
-    
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
-  
+    my $babel = GPS::Babel->new();
+
+    # Read a gpx file. All formats supported by gpsbabel are supported
+    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
+
+    # Iterate over all points
+    my $iter = $data->all_points;
+    # Delete points at high altitude.
+    while (my $pt = $iter->()) {
+        my $ele = $pt->ele;
+        if (defined $ele && $ele > 300) {
+            $iter->delete_current();
+        }
+    }
+
+    # Rename first route    
+    if ($data->routes->count > 0) {
+        $data->route->[0]->name('First Route');
+    }
+
+    # Write as a KML file
+    $babel->write($data, 'name' => 'out.kml', 'fmt' => 'kml');
+
+    # Make new GPS data
+    my $data2 = GPS::Babel::Data->new();
+
+    # Copy waypoints from original data
+    $data2->waypoints->append($data->waypoints->clone);
+    
+    # Write as GPX file
+    $babel->write($data2, 'name' => 'waypoints.gpx', 'fmt' => 'gpx');
+      
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+gpsbabel (http://gpsbabel.org/) can translate between more than 90
+different file formats used for GPS data and supports upload and
+download to Garmin, Magellan and other GPS devices.
 
+GPS::Babel uses gpsbabel as an input and output filter and provides a
+simple object oriented interface to GPS data.
 
-=head1 INTERFACE 
+=head1 CONSTRUCTORS
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=item new( exe => exename )
 
+Constructs a new object optionally supplying the pathname of the
+instance of gpsbabel that should be used.
+
+=head1 METHODS
+
+=item read( name => filename, fmt => input_format )
+
+Read data from a file. Returns a
+L<GPS::Babel::Data|GPS::Babel::Data> object.
+
+=item write( L<GPS::Babel::Data|GPS::Babel::Data>, name => filename, fmt => output_format )
+
+Write data to a file.
 
 =head1 DIAGNOSTICS
 
