@@ -17,13 +17,14 @@ BEGIN {
         next
     );
     
-    no strict 'refs';
     for my $func (@funcs) {
         my $code = sub {
             my $self = shift;
             return $self->call_context($func, @_);
         };
+        no strict 'refs';
         *{"GPS::Babel::Iterator::$func"} = $code;
+        use strict 'refs';
     }
 };
 
@@ -181,14 +182,14 @@ sub new_for_array {
 }
 
 sub new_for_object {
-    my ($proto, $obj, $parent) = @_;
+    my ($proto, $obj) = @_;
 
     my $it = sub {
         my $res = $obj;
         $obj = undef;
         return $res;
     };
-    return GPS::Babel::Iterator->new($it, $parent);
+    return GPS::Babel::Iterator->new($it);
 }
 
 sub context {

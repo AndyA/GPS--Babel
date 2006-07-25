@@ -6,6 +6,7 @@ use Carp;
 use GPS::Babel::Collection;
 use GPS::Babel::Iterator;
 use GPS::Babel::Object;
+use GPS::Babel::Util;
 use HTML::Entities;
 use Scalar::Util qw(blessed);
 
@@ -34,16 +35,6 @@ sub new {
 	return bless $self, $class;
 }
 
-# Utility function: clone an arbitrary object. Not a member
-sub clone_object {
-    my $obj = shift;
-    return $obj 
-        unless ref $obj;
-    return $obj->clone()
-        if blessed($obj) && $obj->can('clone');
-    return $obj;
-}
-
 # Return a deep copy of the current object
 sub clone {
     my $self = shift;
@@ -51,7 +42,7 @@ sub clone {
     $new->{item} = $self->{item}->clone() 
         if $self->{item};
     while (my ($n, $v) = each(%{$self->{attr}})) {
-        $new->{attr}->{$n} = clone_object($v);
+        $new->{attr}->{$n} = GPS::Babel::Util::clone_object($v);
     }
     return bless $new, ref($self);
 }
@@ -78,6 +69,10 @@ sub attr {
 	} else {
 	    return $self->{attr}->{$name};
 	}
+}
+
+sub attr_names {
+    return keys %{$self->{attr}};
 }
 
 sub collection_accessor {

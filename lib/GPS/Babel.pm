@@ -1,79 +1,5 @@
 package GPS::Babel;
 
-use warnings;
-use strict;
-use Carp;
-
-use version; our $VERSION = qv('0.0.2');
-
-use File::Which qw(which);
-use IO::Pipe;
-use GPS::Babel::Data;
-
-my $EXENAME = 'gpsbabel';
-
-# Module implementation here
-
-sub new {
-    my $proto   = shift;
-    my %opts    = @_;
-	my $class   = ref($proto) || $proto;
-
-	my $self = {
-	    exe => $opts{exe} || which($EXENAME)
-    };
-    
-	return bless $self, $class;
-}
-
-# TODO: If source is a file handle pipe the contents into gpsbabel
-
-sub read {
-    my $self = shift;
-    my %opts = @_;
-    my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
-    my $name = $opts{name} || croak "Must supply the name of a file to read";
-    my @args = ($self->{exe}, '-p', '',
-                qw(-r -w -t -i), 
-                $opts{fmt}, '-f', $name, 
-                qw(-o gpx -F -));
-    #print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->reader(@args);
-    croak "gpsbabel failed ($!)"
-        if $fh->eof;
-    my $data = GPS::Babel::Data->new();
-    $data->read_from_gpx($fh);
-    $fh->close();
-    croak "gpsbabel failed with exit code " . ($?>>8) if $?;
-    return $data;
-}
-
-# TODO: If destination is a file handle pipe the output of gpsbabel to it
-
-sub write {
-    my $self = shift;
-    my $data = shift;
-    my %opts = @_;
-    my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
-    my $name = $opts{name} || croak "Must supply the name of a file to write";
-    my @args = ($self->{exe}, '-p', '',
-                qw(-r -w -t -i gpx -f - -o),
-                $fmt, '-F', $name);
-    #print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->writer(@args);
-    $data->write_as_gpx($fh);
-    $fh->close() or croak "Write error ($!)";
-    croak "gpsbabel failed with exit code " . ($?>>8) if $?;
-}
-
-# TODO: Add interface that allows data to be piped through gpsbabel filters
-# my $newdata = $babel->filter($data, blah)
-
-1; # Magic true value required at end of module
-__END__
-
 =head1 NAME
 
 GPS::Babel - Easy manipulation of GPS waypoints, tracks & routes
@@ -117,109 +43,154 @@ This document describes GPS::Babel version 0.0.2
     
     # Write as GPX file
     $babel->write($data2, 'name' => 'waypoints.gpx', 'fmt' => 'gpx');
-      
+
 =head1 DESCRIPTION
 
-gpsbabel (http://gpsbabel.org/) can translate between more than 90
+gpsbabel (L<http://gpsbabel.org/>) can translate between more than 90
 different file formats used for GPS data and supports upload and
 download to Garmin, Magellan and other GPS devices.
 
 GPS::Babel uses gpsbabel as an input and output filter and provides a
 simple object oriented interface to GPS data.
 
+=cut
+
+use warnings;
+use strict;
+use Carp;
+
+use version; our $VERSION = qv('0.0.2');
+
+use File::Which qw(which);
+use IO::Pipe;
+use GPS::Babel::Data;
+
+my $EXENAME = 'gpsbabel';
+
 =head1 CONSTRUCTORS
+
+=over
 
 =item new( exe => exename )
 
 Constructs a new object optionally supplying the pathname of the
-instance of gpsbabel that should be used.
+instance of gpsbabel that should be used. If the exe option is omitted
+the value of File::Which::which('gpsbabel') will be used.
+
+=cut
+
+sub new {
+    my $proto   = shift;
+    my %opts    = @_;
+	my $class   = ref($proto) || $proto;
+
+	my $self = {
+	    exe => $opts{exe} || which($EXENAME)
+    };
+    
+	return bless $self, $class;
+}
+
+=back
 
 =head1 METHODS
 
+=over
+
 =item read( name => filename, fmt => input_format )
 
-Read data from a file. Returns a
-L<GPS::Babel::Data|GPS::Babel::Data> object. The C<fmt> option may be any data format supported by gpsbabel.
+Read data from a file. Returns a L<GPS::Babel::Data|GPS::Babel::Data>
+object. The C<fmt> option may be any data format supported by gpsbabel.
+
+=cut
+
+# TODO: If source is a file handle pipe the contents into gpsbabel
+
+sub read {
+    my $self = shift;
+    my %opts = @_;
+    my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
+    my $name = $opts{name} || croak "Must supply the name of a file to read";
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i), 
+                $opts{fmt}, '-f', $name, 
+                qw(-o gpx -F -));
+    #print join(' ', @args), "\n";
+    my $fh = IO::Pipe->new();
+    $fh->reader(@args);
+    croak "gpsbabel failed ($!)"
+        if $fh->eof;
+    my $data = GPS::Babel::Data->new();
+    $data->read_from_gpx($fh);
+    $fh->close();
+    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+    return $data;
+}
+
+# TODO: If destination is a file handle pipe the output of gpsbabel to it
 
 =item write( L<GPS::Babel::Data|GPS::Babel::Data>, name => filename, fmt => output_format )
 
 Write data to a file. Any format supported by gpsbabel may be used.
 
-=head1 DIAGNOSTICS
+=cut
 
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+sub write {
+    my $self = shift;
+    my $data = shift;
+    my %opts = @_;
+    my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
+    my $name = $opts{name} || croak "Must supply the name of a file to write";
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i gpx -f - -o),
+                $fmt, '-F', $name);
+    #print join(' ', @args), "\n";
+    my $fh = IO::Pipe->new();
+    $fh->writer(@args);
+    $data->write_as_gpx($fh);
+    $fh->close() or croak "Write error ($!)";
+    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+}
 
-=over
+# TODO: Add interface that allows data to be piped through gpsbabel filters
+# my $newdata = $babel->filter($data, blah)
 
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
+1; # Magic true value required at end of module
+__END__
 
 =back
 
+=head1 DIAGNOSTICS
+
+=over
+
+=item C<< Must supply the format to read/write >>
+
+The C<fmt> option must be supplied to read/write().
+
+=item C<< Must supply the name of a file to read/write >>
+
+A filename must be supplied to read/write() in the C<name> option.
+
+=item C<< gpsbabel failed (%s) >>
+
+The gpsbabel binary couldn't be executed or failed with an error.
+
+=back
 
 =head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
   
 GPS::Babel requires no configuration files or environment variables.
 
-
-=head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
+Note that options set in gpsbabel.ini will not be processed.
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
 Please report any bugs or feature requests to
 C<bug-gps-babel@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
-
 
 =head1 AUTHOR
 

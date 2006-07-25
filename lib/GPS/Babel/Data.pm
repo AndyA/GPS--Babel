@@ -1,5 +1,45 @@
 package GPS::Babel::Data;
 
+=head1 NAME
+
+GPS::Babel::Collection - Collections of points for L<GPS::Babel|GPS::Babel>.
+
+=head1 VERSION
+
+This document describes GPS::Babel::Collection version 0.0.2
+
+=head1 SYNOPSIS
+
+    use GPS::Babel;
+
+    my $babel = GPS::Babel->new();
+
+    # Read a gpx file. All formats supported by gpsbabel are supported
+    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
+
+    # Rename first route. Collections behave much like arrays (which they are)
+    if ($data->routes->count > 0) {
+        $data->route->[0]->name('First Route');
+    }
+
+    # Copy waypoints from original data. Collections support convenience
+    # methods such as append() and clone()
+    $data2->waypoints->append($data->waypoints->clone);
+
+=head1 DESCRIPTION
+
+L<GPS::Babel|GPS::Babel> provides a simple interface to gpsbabel
+(L<http://gpsbabel.org/>). This class is used to hold collections of
+points (and sometimes other collections). GPS::Babel::Collection objects
+behave like a normal array but have a number of convenience methods that
+simplify the manipulation of GPS data sets.
+
+In addition to the methods described here GPS::Babel::Collection
+inherits a number of methods from
+L<GPS::Babel::Object|GPS::Babel::Object>.
+
+=cut
+
 use warnings;
 use strict;
 use Carp;
@@ -22,19 +62,31 @@ our @ISA = qw(GPS::Babel::Node);
 
 # Make accessors for containers
 BEGIN {
-    no strict 'refs';
     for my $singular (qw(route track waypoint)) {
         my $plural = $singular . 's';
         my $accessor = sub {
             my $self = shift;
             return $self->collection_accessor(\$self->{$plural}, @_);
         };
+        no strict 'refs';
         # Generate singular version
         *{"GPS::Babel::Data::$singular"} = $accessor;
         # Generate plural version
         *{"GPS::Babel::Data::$plural"} = $accessor;
+        use strict 'refs';
     }
 };
+
+=head1 CONSTRUCTORS
+
+=over
+
+=item new
+
+Constructs a new object. Any arguments to the constructor are added to
+the array.
+
+=cut
 
 sub new {
     my ($proto, @args) = @_;
@@ -142,11 +194,6 @@ sub read_from_gpx {
     );
 
     $p->parse($fh);
-    
-    # print "Unhandled keys:\n";
-    # for (sort keys %unk) {
-    #     print "$_\n";
-    # }
 }
 
 sub set_attr {
@@ -219,12 +266,9 @@ sub clone {
     return $new;
 }
 
-# Sanity check the structure of the tree - croak if it's bad
 sub check_structure {
-    
+    # TODO
 }
-
-# Return an iterator that will visit all points
 
 1; # Magic true value required at end of module
 __END__

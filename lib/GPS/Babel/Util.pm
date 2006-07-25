@@ -30,6 +30,16 @@ sub massage_coordinates {
     return @a;
 }
 
+# Utility function: clone an arbitrary object. Not a member
+sub clone_object {
+    my $obj = shift;
+    return $obj 
+        unless ref $obj;
+    return $obj->clone()
+        if blessed($obj) && $obj->can('clone');
+    return $obj;
+}
+
 1; # Magic true value required at end of module
 __END__
 

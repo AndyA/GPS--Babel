@@ -53,7 +53,7 @@ if ($data->routes->count > 0) {
     $data->routes->add($nroute);
 }
 
-print Dumper($data);
+#print Dumper($data);
 
 # Add all the waypoints to the first route
 $data->routes->[0]->append($data->waypoints->clone);
