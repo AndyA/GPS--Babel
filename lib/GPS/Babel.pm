@@ -85,8 +85,11 @@ sub new {
 	my $class   = ref($proto) || $proto;
 
 	my $self = {
-	    exe => $opts{exe} || which($EXENAME)
+	    exe => $opts{exe} || which($EXENAME) || undef
     };
+    
+    croak "Can't find gpsbabel"
+        unless defined $self->{exe};
     
 	return bless $self, $class;
 }

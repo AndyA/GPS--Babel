@@ -72,6 +72,7 @@ sub attr {
 }
 
 sub attr_names {
+    my $self = shift;
     return keys %{$self->{attr}};
 }
 
