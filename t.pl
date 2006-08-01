@@ -12,11 +12,6 @@ use Data::Dumper;
 
 $| = 1;
 
-$SIG{PIPE} = sub {
-	my $name = shift;
-	die "Somebody sent me a SIG$name";
-};
-
 # We only need a single GPS::Babel object
 my $babel = GPS::Babel->new();
 

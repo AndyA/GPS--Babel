@@ -88,7 +88,7 @@ sub count {
     return scalar(@{$self});
 }
 
-=item empty
+=item emptyhttp://www.google.co.uk/search?hs=rbQ&hl=en&client=firefox&rls=org.mozilla%3Aen-US%3Aunofficial&q=ngi+belgium&btnG=Search&meta=
 
 Removes all elements from the collection. Equivalent to C<splice @{$self}>.
 
