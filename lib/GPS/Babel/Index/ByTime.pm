@@ -1,233 +1,135 @@
-package GPS::Babel::Node;
+package GPS::Babel::Index::ByTime;
 
 use warnings;
 use strict;
 use Carp;
-use GPS::Babel::Collection;
-use GPS::Babel::Iterator;
-use GPS::Babel::Object;
-use GPS::Babel::Util;
-use HTML::Entities;
 use Scalar::Util qw(blessed);
 
-our $AUTOLOAD;
-
-our @ISA = qw(GPS::Babel::Object);
+use GPS::Babel::Point;
 
 sub new {
-    my $proto   = shift;
-	my $class   = ref($proto) || $proto;
+    my ($proto, $obj) = @_;
+    my $class = ref($proto) || $proto;
 
-    if (@_ && (my $ref = ref $_[0])) {
-        if ($ref eq 'HASH') {
-            @_ = ( %{$_[0]} );
-        } elsif (blessed($_[0]) && $_[0]->can('clone')) {
-            return $_[0]->clone;
-        } else {
-            croak "Can't create an object with a $ref";
-        }
+    croak "Need an object"
+        unless blessed $obj;
+
+    unless ($obj->isa('GPS::Babel::Iterator')) {
+        croak "Object must be an iterator or support all_points method."
+            unless $obj->can('all_points');
+        $obj = $obj->all_points;
     }
+
+    # Sort all the points that have time fields. We don't discard
+    # the cached time field because it'll speed things up later
+    my @pts = sort { $a->[1] <=> $b->[1] }
+              grep { defined $_->[1] && defined $_->[2] && defined $_->[3] }
+              map  { [ $_, $_->attr('time'), $_->attr('lat'), $_->attr('lon') ] } $obj->as_array;
 
     my $self = {
-        attr => { @_ },
+        points  => \@pts
     };
 
-	return bless $self, $class;
+    return bless $self, $class;
 }
 
-# Return a deep copy of the current object
-sub clone {
+# Returns the index of the first point who's time is >= the supplied time
+sub _search {
     my $self = shift;
-    my $new  = { attr => { } };
-    $new->{item} = $self->{item}->clone()
-        if $self->{item};
-    while (my ($n, $v) = each(%{$self->{attr}})) {
-        $new->{attr}->{$n} = GPS::Babel::Util::clone_object($v);
-    }
-    return bless $new, ref($self);
-}
+    my $time = shift;
 
-# Automatically provide accessor methods named after
-# fields.
-sub AUTOLOAD {
-	my $self = shift;
-	my $type = ref($self)
-		    or croak "$self is not an object";
+    my $pts  = $self->{points};
 
-	my $name = $AUTOLOAD;
+    my ($lo, $mid, $hi) = ( 0, 0, scalar @{$pts}-1 );
 
-	$name =~ s/.*://;   # strip fully-qualified portion
-
-    return $self->attr($name, @_);
-}
-
-sub attr {
-    my $self = shift;
-    my $name = shift;
-	if (@_) {
-	    return $self->{attr}->{$name} = shift;
-	} else {
-	    return $self->{attr}->{$name};
-	}
-}
-
-sub attr_names {
-    my $self = shift;
-    return keys %{$self->{attr}};
-}
-
-sub collection_accessor {
-    my $self = shift;
-    my $ref  = shift;
-    if (@_) {
-        my $obj = shift;
-        # TODO: Add any object that supports as_array() ?
-        if (ref($obj) eq 'ARRAY') {
-            # Turn an array into a collection
-            my $col = GPS::Babel::Collection->new();
-            $col->add($obj);
-            $obj = $col;
-        }
-        confess "Must be a collection"
-            unless blessed($obj) && $obj->isa('GPS::Babel::Collection');
-        return $$ref = $obj;
-    } else {
-        return $$ref ||= GPS::Babel::Collection->new();
-    }
-}
-
-sub item {
-    my $self = shift;
-    return $self->collection_accessor(\$self->{item}, @_);
-}
-
-sub items {
-    return item(@_);
-}
-
-sub add_child {
-    my ($self, $path, $name, $obj) = @_;
-    $self->add($obj);
-}
-
-# Default: place added objects in our 'item' container
-sub add {
-    my $self = shift;
-    $self->item->add(@_);
-}
-
-sub count {
-    my $self = shift;
-    return $self->item->count();
-}
-
-sub empty {
-    my $self = shift;
-    $self->item->empty();
-}
-
-sub set_attr {
-    my ($self, $path, $name, $value) = @_;
-    #print "set_attr($self, \"$path\", \"$name\", \"$value\")\n";
-    $self->attr($name, $value);
-}
-
-sub tidy_text {
-    my ($self, $str) = @_;
-    $str =~ s/^\s+//;
-    $str =~ s/\s+$//;
-    $str =~ s/\s+/ /g;
-    return $str;
-}
-
-sub all_points {
-    my $self = shift;
-    return $self->item->all_points();
-}
-
-sub all_nodes {
-    my $self = shift;
-    my @q = ( $self );
-    my $it = sub {
-        my $obj = shift @q || return undef;
-        while (my($n, $v) = each(%{$obj})) {
-            if (blessed($v) && $v->isa('GPS::Babel::Object')) {
-                push @q, $v->as_array;
-            }
-        }
-        return $obj;
-    };
-    return GPS::Babel::Iterator->new($it);
-}
-
-sub open_tag {
-    my ($self, $elem, $attr) = @_;
-    my $tag = '<' . $elem;
-    if (defined $attr) {
-        while (my($n, $v) = each(%{$attr})) {
-            $tag .= ' ' . $n . '="' . encode_entities($self->to_gpx($n, $v)) . '"';
-        }
-    }
-    return $tag . '>';
-}
-
-sub close_tag {
-    my ($self, $elem) = @_;
-    return "</$elem>";
-}
-
-sub encode_as_attr {
-    my $self = shift;
-    return qw(lat lon minlat minlon maxlat maxlon);
-}
-
-sub write_contents_as_gpx {
-    my ($self, $fh, $indent, $path) = @_;
-    $self->item->write_as_gpx($fh, $indent, $path);
-}
-
-sub write_str {
-    my $self = shift;
-    my $fh   = shift;
-    $fh->print(@_) or croak "Write error ($!)";
-}
-
-sub write_as_gpx {
-    my ($self, $fh, $indent, $path, @exc) = @_;
-    my $elem;
-    my $spc = '    ';
-    my $pad = $spc x $indent;
-    if ($path =~ m!^(.+?)/(.+)$!) {
-        ($elem, $path) = ($1, $2);
-    } else {
-        ($elem, $path) = ($path, undef);
-    }
-    my %attr = ( );
-    my %item = ( );
-    my @as_attr = $self->encode_as_attr();
-    my %is_attr = ( );
-    @is_attr{@as_attr} = @as_attr;
-    my %exc = ( );
-    @exc{@exc} = @exc;
-    while (my($n, $v) = each(%{$self->{attr}})) {
-        next if $exc{$n};
-        if ($is_attr{$n}) {
-            $attr{$n} = $v;
+    TRY:
+    while ($lo <= $hi) {
+        $mid = int(($lo + $hi) / 2);
+        my $cmp = $pts->[$mid]->[1] <=> $time;
+        if ($cmp < 0) {
+            $lo = $mid + 1;
+        } elsif ($cmp > 0) {
+            $hi = $mid - 1;
         } else {
-            $item{$n} = $v;
+            last TRY;
         }
     }
-    $fh->print($pad, $self->open_tag($elem, \%attr), "\n");
-    while (my($n, $v) = each(%item)) {
-        $self->write_str($fh, $pad, $spc, $self->open_tag($n));
-        $self->write_str($fh, encode_entities($self->to_gpx($n, $v)));
-        $self->write_str($fh, $self->close_tag($n), "\n");
+
+    while ($mid < scalar @{$pts} && $pts->[$mid]->[1] < $time) {
+        $mid++;
     }
-    $self->write_contents_as_gpx($fh, $indent + 1, $path);
-    $self->write_str($fh, $pad, $self->close_tag($elem), "\n");
+
+    return ($mid < scalar @{$pts}) ? $mid : undef;
 }
 
-1; # Magic true value required at end of module
+sub _interp {
+    my ($lo, $mid, $hi, $val1, $val2) = @_;
+    confess "$lo <= $mid <= $hi !"
+        unless $lo <= $mid && $mid <= $hi;
+    my $scale = $hi  - $lo;
+    my $posn  = $mid - $lo;
+    return ($val1 * ($scale - $posn) + $val2 * $posn) / $scale;
+}
+
+sub _lookup {
+    my $self = shift;
+    my $time = shift;
+
+    my $pos = $self->_search($time);
+    if (defined $pos) {
+        my $pts = $self->{points};
+        my $ptm = $pts->[$pos]->[1];
+
+        if ($ptm == $time) {
+            # Exact match - just return the point
+            return ( $pts->[$pos]->[0], 0, 0 );
+        }
+
+        # If we're at the first point we can't
+        # interpolate with anything.
+        return if $pos == 0;
+
+        my ($p1, $p2) = ( $pts->[$pos-1], $pts->[$pos] );
+
+        my $pt = GPS::Babel::Point->new(time => $time);
+        # Linear interpolation between nearest points
+        $pt->attr('lat', _interp($p1->[1], $time, $p2->[1], $p1->[2], $p2->[2]));
+        $pt->attr('lon', _interp($p1->[1], $time, $p2->[1], $p1->[3], $p2->[3]));
+        my ($e1, $e2) = ( $p1->[0]->attr('ele'), $p2->[0]->attr('ele') );
+        if (defined $e1 && defined $e2) {
+            $pt->attr('ele', _interp($p1->[1], $time, $p2->[1], $e1, $e2));
+        }
+
+        my $d1 = $time - $p1->[1];
+        my $d2 = $p2->[1] - $time;
+        my $time_diff = $d1 < $d2 ? $d1 : $d2;
+
+        # Return a synthetic point
+        return ( $pt, 1, $time_diff );
+    }
+
+    return;
+}
+
+# Return a point that represents the position at the specified time. In an
+# array context returns the point, a flag that indicates whether the
+# returned point is synthetic and the number of seconds to the nearest real
+# point. If the time can't be matched the returned point will be undef.
+sub lookup {
+    my $self = shift;
+    my @r = $self->_lookup(@_);
+    return unless @r;
+    return wantarray ? @r : $r[0];
+}
+
+sub time_range {
+    my $self = shift;
+    my $pts  = $self->{points};
+    return unless scalar @{$pts};
+    return ( $pts->[0]->[1], $pts->[-1]->[1] );
+}
+
+1;
 __END__
 
 =head1 NAME
