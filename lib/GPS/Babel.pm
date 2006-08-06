@@ -27,7 +27,7 @@ This document describes GPS::Babel version 0.0.2
         }
     }
 
-    # Rename first route    
+    # Rename first route
     if ($data->routes->count > 0) {
         $data->route->[0]->name('First Route');
     }
@@ -40,7 +40,7 @@ This document describes GPS::Babel version 0.0.2
 
     # Copy waypoints from original data
     $data2->waypoints->append($data->waypoints->clone);
-    
+
     # Write as GPX file
     $babel->write($data2, 'name' => 'waypoints.gpx', 'fmt' => 'gpx');
 
@@ -87,10 +87,10 @@ sub new {
 	my $self = {
 	    exe => $opts{exe} || which($EXENAME) || undef
     };
-    
+
     croak "Can't find gpsbabel"
         unless defined $self->{exe};
-    
+
 	return bless $self, $class;
 }
 
@@ -115,8 +115,8 @@ sub read {
     my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
     my $name = $opts{name} || croak "Must supply the name of a file to read";
     my @args = ($self->{exe}, '-p', '',
-                qw(-r -w -t -i), 
-                $opts{fmt}, '-f', $name, 
+                qw(-r -w -t -i),
+                $opts{fmt}, '-f', $name,
                 qw(-o gpx -F -));
     #print join(' ', @args), "\n";
     my $fh = IO::Pipe->new();
@@ -182,7 +182,7 @@ The gpsbabel binary couldn't be executed or failed with an error.
 =back
 
 =head1 CONFIGURATION AND ENVIRONMENT
-  
+
 GPS::Babel requires no configuration files or environment variables.
 
 Note that options set in gpsbabel.ini will not be processed.
