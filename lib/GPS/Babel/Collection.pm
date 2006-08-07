@@ -1,45 +1,5 @@
 package GPS::Babel::Collection;
 
-=head1 NAME
-
-GPS::Babel::Collection - Collections of points for L<GPS::Babel|GPS::Babel>.
-
-=head1 VERSION
-
-This document describes GPS::Babel::Collection version 0.0.2
-
-=head1 SYNOPSIS
-
-    use GPS::Babel;
-
-    my $babel = GPS::Babel->new();
-
-    # Read a gpx file. All formats supported by gpsbabel are supported
-    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
-
-    # Rename first route. Collections behave much like arrays (which they are)
-    if ($data->routes->count > 0) {
-        $data->route->[0]->name('First Route');
-    }
-
-    # Copy waypoints from original data. Collections support convenience
-    # methods such as append() and clone()
-    $data2->waypoints->append($data->waypoints->clone);
-
-=head1 DESCRIPTION
-
-L<GPS::Babel|GPS::Babel> provides a simple interface to gpsbabel
-(L<http://gpsbabel.org/>). This class is used to hold collections of
-points (and sometimes other collections). GPS::Babel::Collection objects
-behave like a normal array but have a number of convenience methods that
-simplify the manipulation of GPS data sets.
-
-In addition to the methods described here GPS::Babel::Collection
-inherits a number of methods from
-L<GPS::Babel::Object|GPS::Babel::Object>.
-
-=cut
-
 use warnings;
 use strict;
 use Carp;
@@ -51,17 +11,6 @@ use Scalar::Util qw(blessed);
 
 our @ISA = qw(GPS::Babel::Object);
 
-=head1 CONSTRUCTORS
-
-=over
-
-=item new( exe => exename )
-
-Constructs a new object. Any arguments to the constructor are added to
-the array.
-
-=cut
-
 sub new {
     my ($proto, @args) = @_;
     my $class = ref($proto) || $proto;
@@ -70,29 +19,10 @@ sub new {
 	return $self;
 }
 
-=back
-
-=head1 METHODS
-
-=over
-
-=item count
-
-Returns the number of elements in the collection. Equivalent to
-C<scalar(@{$collecion})>.
-
-=cut
-
 sub count {
     my $self = shift;
     return scalar(@{$self});
 }
-
-=item emptyhttp://www.google.co.uk/search?hs=rbQ&hl=en&client=firefox&rls=org.mozilla%3Aen-US%3Aunofficial&q=ngi+belgium&btnG=Search&meta=
-
-Removes all elements from the collection. Equivalent to C<splice @{$self}>.
-
-=cut
 
 sub empty {
     my $self = shift;
@@ -132,6 +62,68 @@ sub as_array {
 
 1;
 __END__
+
+=head1 NAME
+
+GPS::Babel::Collection - Collections of points for L<GPS::Babel|GPS::Babel>.
+
+=head1 VERSION
+
+This document describes GPS::Babel::Collection version 0.0.2
+
+=head1 SYNOPSIS
+
+    use GPS::Babel;
+
+    my $babel = GPS::Babel->new();
+
+    # Read a gpx file. All formats supported by gpsbabel are supported
+    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
+
+    # Rename first route. Collections behave much like arrays (which they are)
+    if ($data->routes->count > 0) {
+        $data->route->[0]->name('First Route');
+    }
+
+    # Copy waypoints from original data. Collections support convenience
+    # methods such as append() and clone()
+    $data2->waypoints->append($data->waypoints->clone);
+
+=head1 DESCRIPTION
+
+L<GPS::Babel|GPS::Babel> provides a simple interface to gpsbabel
+(L<http://gpsbabel.org/>). This class is used to hold collections of
+points (and sometimes other collections). GPS::Babel::Collection objects
+behave like a normal array but have a number of convenience methods that
+simplify the manipulation of GPS data sets.
+
+In addition to the methods described here GPS::Babel::Collection
+inherits a number of methods from
+L<GPS::Babel::Object|GPS::Babel::Object>.
+
+=head1 CONSTRUCTORS
+
+=over
+
+=item new( exe => exename )
+
+Constructs a new object. Any arguments to the constructor are added to
+the array.
+
+=back
+
+=head1 METHODS
+
+=over
+
+=item count
+
+Returns the number of elements in the collection. Equivalent to
+C<scalar(@{$collecion})>.
+
+=item empty
+
+Removes all elements from the collection. Equivalent to C<splice @{$self}>.
 
 =back
 

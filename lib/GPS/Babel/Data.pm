@@ -1,45 +1,5 @@
 package GPS::Babel::Data;
 
-=head1 NAME
-
-GPS::Babel::Collection - Collections of points for L<GPS::Babel|GPS::Babel>.
-
-=head1 VERSION
-
-This document describes GPS::Babel::Collection version 0.0.2
-
-=head1 SYNOPSIS
-
-    use GPS::Babel;
-
-    my $babel = GPS::Babel->new();
-
-    # Read a gpx file. All formats supported by gpsbabel are supported
-    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
-
-    # Rename first route. Collections behave much like arrays (which they are)
-    if ($data->routes->count > 0) {
-        $data->route->[0]->name('First Route');
-    }
-
-    # Copy waypoints from original data. Collections support convenience
-    # methods such as append() and clone()
-    $data2->waypoints->append($data->waypoints->clone);
-
-=head1 DESCRIPTION
-
-L<GPS::Babel|GPS::Babel> provides a simple interface to gpsbabel
-(L<http://gpsbabel.org/>). This class is used to hold collections of
-points (and sometimes other collections). GPS::Babel::Collection objects
-behave like a normal array but have a number of convenience methods that
-simplify the manipulation of GPS data sets.
-
-In addition to the methods described here GPS::Babel::Collection
-inherits a number of methods from
-L<GPS::Babel::Object|GPS::Babel::Object>.
-
-=cut
-
 use warnings;
 use strict;
 use Carp;
@@ -77,17 +37,6 @@ BEGIN {
     }
 };
 
-=head1 CONSTRUCTORS
-
-=over
-
-=item new
-
-Constructs a new object. Any arguments to the constructor are added to
-the array.
-
-=cut
-
 sub new {
     my ($proto, @args) = @_;
 
@@ -99,17 +48,17 @@ sub new {
 
 sub read_from_gpx {
     my ($self, $fh) = @_;
-    
+
     my $p = XML::Parser->new();
     my @path = ( );
-    
+
     # Stack of objects being built. The top of stack is the
     # innermost object
     my @work = ( [1, $self] );
-    
+
     # Stack of strings that accumulate the text in the innermost element
     my @text = ( );
-    
+
     my %unk = ( );
 
     # Maps gpx path to GPS::Babel::Data class.
@@ -122,7 +71,7 @@ sub read_from_gpx {
         'gpx/trk/trkseg/trkpt'  => 'GPS::Babel::Point',
         'gpx/wpt'               => 'GPS::Babel::Point'
     );
-    
+
     my $char_handler = sub {
         my ($expat, $text) = @_;
         my $path = join('/', @path);
@@ -130,7 +79,7 @@ sub read_from_gpx {
             $text[-1] .= $text;
         }
     };
-    
+
     my $start_handler = sub {
         my ($expat, $elem, %attr) = @_;
         push @path, $elem;
@@ -147,7 +96,7 @@ sub read_from_gpx {
             for (keys %attr) {
                 $obj->set_attr($path, $_, $attr{$_});
             }
-            
+
             push @work, [ scalar(@path), $obj ];
         } else {
             # Should do something with attributes
@@ -156,17 +105,17 @@ sub read_from_gpx {
 
         push @text, '';
     };
-    
+
     my $end_handler = sub {
         my ($expat, $elem) = @_;
-        
+
         my $path = join('/', @path);
 
         confess "Text stack empty"
             unless @text;
 
         my $val = pop @text;
-        
+
         if ($path_map{$path}) {
             # Must have created an object
             my $obj = pop @work;
@@ -179,14 +128,14 @@ sub read_from_gpx {
             my $obj = $top->[1];
             $obj->set_attr($path, $kpath, $obj->from_gpx($kpath, $val));
         }
-        
+
         my $celem = pop @path;
         confess "Unmatched $elem"
             unless $celem eq $elem;
 
-            
+
     };
-    
+
     $p->setHandlers(
         Char    => $char_handler,
         Start   => $start_handler,
@@ -234,7 +183,7 @@ sub add {
 
 sub all_points {
     my $self = shift;
-    
+
     return GPS::Babel::Iterator->new_with_iterators(
         $self->waypoints->all_points,
         $self->routes->all_points,
@@ -275,97 +224,50 @@ __END__
 
 =head1 NAME
 
-GPS::Babel - [One line description of module's purpose here]
-
+GPS::Babel::Collection - Collections of points for L<GPS::Babel|GPS::Babel>.
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.1
-
+This document describes GPS::Babel::Collection version 0.0.2
 
 =head1 SYNOPSIS
 
     use GPS::Babel;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
-  
+    my $babel = GPS::Babel->new();
+
+    # Read a gpx file. All formats supported by gpsbabel are supported
+    my $data = $babel->read('name' => 'raw.gpx', 'fmt' => 'gpx');
+
+    # Rename first route. Collections behave much like arrays (which they are)
+    if ($data->routes->count > 0) {
+        $data->route->[0]->name('First Route');
+    }
+
+    # Copy waypoints from original data. Collections support convenience
+    # methods such as append() and clone()
+    $data2->waypoints->append($data->waypoints->clone);
+
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+L<GPS::Babel|GPS::Babel> provides a simple interface to gpsbabel
+(L<http://gpsbabel.org/>). This class is used to hold collections of
+points (and sometimes other collections). GPS::Babel::Collection objects
+behave like a normal array but have a number of convenience methods that
+simplify the manipulation of GPS data sets.
 
+In addition to the methods described here GPS::Babel::Collection
+inherits a number of methods from
+L<GPS::Babel::Object|GPS::Babel::Object>.
 
-=head1 INTERFACE 
-
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
-
-
-=head1 DIAGNOSTICS
-
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+=head1 CONSTRUCTORS
 
 =over
 
-=item C<< Error message here, perhaps with %s placeholders >>
+=item new
 
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
-
-=back
-
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-  
-GPS::Babel requires no configuration files or environment variables.
-
-
-=head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
+Constructs a new object. Any arguments to the constructor are added to
+the array.
 
 =head1 BUGS AND LIMITATIONS
 

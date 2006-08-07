@@ -33,7 +33,7 @@ sub new {
     return bless $self, $class;
 }
 
-# Returns the index of the first point who's time is >= the supplied time
+# Returns the index of the first point with time >= the supplied time
 sub _search {
     my $self = shift;
     my $time = shift;

@@ -1,5 +1,78 @@
 package GPS::Babel;
 
+use warnings;
+use strict;
+use Carp;
+
+use version; our $VERSION = qv('0.0.2');
+
+use File::Which qw(which);
+use IO::Pipe;
+use GPS::Babel::Data;
+
+my $EXENAME = 'gpsbabel';
+
+sub new {
+    my $proto   = shift;
+    my %opts    = @_;
+	my $class   = ref($proto) || $proto;
+
+	my $self = {
+	    exe => $opts{exe} || which($EXENAME) || undef
+    };
+
+    croak "Can't find gpsbabel"
+        unless defined $self->{exe};
+
+	return bless $self, $class;
+}
+
+# TODO: If source is a file handle pipe the contents into gpsbabel
+
+sub read {
+    my $self = shift;
+    my %opts = @_;
+    my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
+    my $name = $opts{name} || croak "Must supply the name of a file to read";
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i),
+                $opts{fmt}, '-f', $name,
+                qw(-o gpx -F -));
+    #print join(' ', @args), "\n";
+    my $fh = IO::Pipe->new();
+    $fh->reader(@args);
+    croak "gpsbabel failed ($!)"
+        if $fh->eof;
+    my $data = GPS::Babel::Data->new();
+    $data->read_from_gpx($fh);
+    $fh->close();
+    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+    return $data;
+}
+
+
+sub write {
+    my $self = shift;
+    my $data = shift;
+    my %opts = @_;
+    my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
+    my $name = $opts{name} || croak "Must supply the name of a file to write";
+    my @args = ($self->{exe}, '-p', '',
+                qw(-r -w -t -i gpx -f - -o),
+                $fmt, '-F', $name);
+    #print join(' ', @args), "\n";
+    my $fh = IO::Pipe->new();
+    $fh->writer(@args);
+    $data->write_as_gpx($fh);
+    $fh->close() or croak "Write error ($!)";
+    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+}
+
+# TODO: Add interface that allows data to be piped through gpsbabel filters
+# my $newdata = $babel->filter($data, blah)
+
+1;
+__END__
 =head1 NAME
 
 GPS::Babel - Easy manipulation of GPS waypoints, tracks & routes
@@ -53,20 +126,6 @@ download to Garmin, Magellan and other GPS devices.
 GPS::Babel uses gpsbabel as an input and output filter and provides a
 simple object oriented interface to GPS data.
 
-=cut
-
-use warnings;
-use strict;
-use Carp;
-
-use version; our $VERSION = qv('0.0.2');
-
-use File::Which qw(which);
-use IO::Pipe;
-use GPS::Babel::Data;
-
-my $EXENAME = 'gpsbabel';
-
 =head1 CONSTRUCTORS
 
 =over
@@ -76,23 +135,6 @@ my $EXENAME = 'gpsbabel';
 Constructs a new object optionally supplying the pathname of the
 instance of gpsbabel that should be used. If the exe option is omitted
 the value of File::Which::which('gpsbabel') will be used.
-
-=cut
-
-sub new {
-    my $proto   = shift;
-    my %opts    = @_;
-	my $class   = ref($proto) || $proto;
-
-	my $self = {
-	    exe => $opts{exe} || which($EXENAME) || undef
-    };
-
-    croak "Can't find gpsbabel"
-        unless defined $self->{exe};
-
-	return bless $self, $class;
-}
 
 =back
 
@@ -105,61 +147,9 @@ sub new {
 Read data from a file. Returns a L<GPS::Babel::Data|GPS::Babel::Data>
 object. The C<fmt> option may be any data format supported by gpsbabel.
 
-=cut
-
-# TODO: If source is a file handle pipe the contents into gpsbabel
-
-sub read {
-    my $self = shift;
-    my %opts = @_;
-    my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
-    my $name = $opts{name} || croak "Must supply the name of a file to read";
-    my @args = ($self->{exe}, '-p', '',
-                qw(-r -w -t -i),
-                $opts{fmt}, '-f', $name,
-                qw(-o gpx -F -));
-    #print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->reader(@args);
-    croak "gpsbabel failed ($!)"
-        if $fh->eof;
-    my $data = GPS::Babel::Data->new();
-    $data->read_from_gpx($fh);
-    $fh->close();
-    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
-    return $data;
-}
-
-# TODO: If destination is a file handle pipe the output of gpsbabel to it
-
 =item write( L<GPS::Babel::Data|GPS::Babel::Data>, name => filename, fmt => output_format )
 
 Write data to a file. Any format supported by gpsbabel may be used.
-
-=cut
-
-sub write {
-    my $self = shift;
-    my $data = shift;
-    my %opts = @_;
-    my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
-    my $name = $opts{name} || croak "Must supply the name of a file to write";
-    my @args = ($self->{exe}, '-p', '',
-                qw(-r -w -t -i gpx -f - -o),
-                $fmt, '-F', $name);
-    #print join(' ', @args), "\n";
-    my $fh = IO::Pipe->new();
-    $fh->writer(@args);
-    $data->write_as_gpx($fh);
-    $fh->close() or croak "Write error ($!)";
-    croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
-}
-
-# TODO: Add interface that allows data to be piped through gpsbabel filters
-# my $newdata = $babel->filter($data, blah)
-
-1; # Magic true value required at end of module
-__END__
 
 =back
 
