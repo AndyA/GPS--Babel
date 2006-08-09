@@ -59,7 +59,7 @@ $babel->write($data, 'name' => 'out.gpx', 'fmt' => 'gpx');
 # A simple function that selects points close to a specified
 # latitude, longitude
 my $near = sub {
-    my $pt = shift;
+    my $pt = $_;
     my $lat = $pt->lat;
     my $lon = $pt->lon;
     my $dx = $lat - 57;

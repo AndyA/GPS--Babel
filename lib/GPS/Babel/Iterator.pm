@@ -5,6 +5,8 @@ use strict;
 use Carp;
 use Scalar::Util qw(blessed);
 
+# TODO: Add map / grep semantics and tidy up or remove gather.
+
 # Iterator wrappers
 BEGIN {
 
@@ -52,21 +54,19 @@ sub new {
 }
 
 sub with_filter {
-    my ($self, @filter) = @_;
+    my ($self, $filt) = @_;
 
-    croak "must be called as a method"
-        unless blessed($self);
+    croak "Must supply a coderef"
+        unless ref $filt eq 'CODE';
 
     my $it = sub {
         if (@_) {
             $self->(@_);
         } else {
             for (;;) {
-                my $obj = $self->();
-                return undef unless defined $obj;
-                for my $filt (@filter) {
-                    return $obj if $filt->($obj);
-                }
+                local $_ = $self->();
+                return undef unless defined $_;
+                return $_ if $filt->();
             }
         }
     };
@@ -86,12 +86,32 @@ sub with_negated_filter {
     return $self->with_filter($nfilt);
 }
 
+sub with_map {
+    my ($self, $func) = @_;
+
+    croak "Must supply a coderef"
+        unless ref $func eq 'CODE';
+
+    my $it = sub {
+        if (@_) {
+            $self->(@_);
+        } else {
+            for (;;) {
+                local $_ = $self->();
+                return undef unless defined $_;
+                my $obj = $func->();
+                return $obj if defined $obj;
+            }
+        }
+    }
+}
+
 sub unique {
     my $self = shift;
 
     my %seen = ( );
     my $filt = sub {
-        my $obj = shift;
+        my $obj = $_;
         return 0 if $seen{$obj};
         $seen{$obj}++;
         return 1;
@@ -208,26 +228,23 @@ sub _call_context {
     }
 }
 
-sub gather {
+sub as_array {
     my $self = shift;
-    my $func = shift;
-
-    croak "Must supply a coderef"
-        unless ref $func eq 'CODE';
 
     my @ar = ( );
 
     while (my $obj = $self->()) {
-        local $_ = $obj;
-        push @ar, $func->();
+        push @ar, $obj;
     }
 
     return @ar;
 }
 
-sub as_array {
+sub gather {
     my $self = shift;
-    return $self->gather(sub { $_ });
+    my $func = shift;
+
+    return $self->with_map($func)->as_array();
 }
 
 1; # Magic true value required at end of module
