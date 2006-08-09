@@ -40,6 +40,7 @@ sub clone {
 
 sub add {
     my $self = shift;
+
     push @{$self}, @_;
 }
 
@@ -97,15 +98,11 @@ points (and sometimes other collections). GPS::Babel::Collection objects
 behave like a normal array but have a number of convenience methods that
 simplify the manipulation of GPS data sets.
 
-In addition to the methods described here GPS::Babel::Collection
-inherits a number of methods from
-L<GPS::Babel::Object|GPS::Babel::Object>.
-
 =head1 CONSTRUCTORS
 
 =over
 
-=item new( exe => exename )
+=item new
 
 Constructs a new object. Any arguments to the constructor are added to
 the array.
@@ -125,11 +122,35 @@ C<scalar(@{$collecion})>.
 
 Removes all elements from the collection. Equivalent to C<splice @{$self}>.
 
+=item clone
+
+Create a deep copy of a collection. See L<GPS::Babel::Node::clone|GPS::Babel::Node/clone>.
+
+=item add
+
+Add items to the end of a collection. For example to add a point to a track
+
+    $data->tracks->[0]->add($new_point);
+
+Multiple arguments may be provided; they will be appended to the collection in order.
+
+=item all_points
+
+Returns a L<GPS::Babel::Iterator|GPS::Babel::Iterator> that iterates each of the points
+in the collection. See L<GPS::Babel::Node::all_points|GPS::Babel::Node/all_points> for
+details of how collections that themselves contain collections are handled.
+
+=item as_array
+
+Return an array containing all the items in the collection.
+
 =back
 
 =head1 SEE ALSO
 
-L<GPS::Babel::Object|GPS::Babel::Object>, L<GPS::Babel|GPS::Babel>
+L<GPS::Babel|GPS::Babel>,
+L<GPS::Babel::Node|GPS::Babel::Node>
+L<GPS::Babel::Object|GPS::Babel::Object>,
 
 =head1 BUGS AND LIMITATIONS
 

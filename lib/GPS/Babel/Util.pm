@@ -5,21 +5,32 @@ use strict;
 use Carp;
 use Scalar::Util qw(blessed);
 
+use Exporter;
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(clone_object gc_distance heading);
+
+my $EARTH_RADIUS = 6378137.0;
+my $PI           = 4 * atan2(1, 1);
+my $DEG_TO_RAD   = $PI / 180.0;
+my $RAD_TO_DEG   = 180.0 / $PI;
+
 sub massage_coordinates {
     my @a = ( );
     while (@_) {
         if (@_ >= 2 && !ref($_[0]) && !ref($_[1])) {
             # Two scalars - must be lat, lon
-            push @a, { lat => $_[0], lon => $_[1] };
-            splice @_, 2;
+            push @a, [ $_[0], $_[1] ];
+            splice @_, 0, 2;
         } elsif (my $ref = ref($_[0])) {
             if ($ref eq 'ARRAY') {
                 my $ar = shift;
-                push @a, { lat => $ar->[0], lon => $ar->[1] };
+                push @a, [ $ar->[0], $ar->[1] ];
             } elsif ($ref eq 'HASH') {
-                push @a, shift;
+                my $hs = shift;
+                push @a, [ $hs->{lat}, $hs->{lon} ];
             } elsif (blessed($_[0]) && $_[0]->isa('GPS::Babel::Point')) {
-                push @a, shift;
+                my $pt = shift;
+                push @a, [ $pt->attr('lat'), $pt->attr('lon') ];
             } else {
                 croak "Can't get a position from a $ref";
             }
@@ -30,17 +41,81 @@ sub massage_coordinates {
     return @a;
 }
 
-# Utility function: clone an arbitrary object. Not a member
+# Utility function: clone an arbitrary object. Not a method
 sub clone_object {
     my $obj = shift;
-    return $obj 
+    return $obj
         unless ref $obj;
     return $obj->clone()
         if blessed($obj) && $obj->can('clone');
     return $obj;
 }
 
-1; # Magic true value required at end of module
+sub deg {
+    return map { $_ * $RAD_TO_DEG } @_;
+}
+
+sub rad {
+    return map { $_ * $DEG_TO_RAD } @_;
+}
+
+# From
+#  http://perldoc.perl.org/functions/sin.html
+sub asin {
+    atan2($_[0], sqrt(1 - $_[0] * $_[0]))
+}
+
+sub gc_distance {
+    @_ = massage_coordinates(@_);
+
+    my $dist = 0;
+    my ($lat1, $lon1);
+    while (my $pt = shift) {
+        my ($lat2, $lon2) = rad($pt->[0], $pt->[1]);
+        if (defined $lat1) {
+            my $sdlat = sin(($lat1 - $lat2) / 2.0);
+            my $sdlon = sin(($lon1 - $lon2) / 2.0);
+            my $res   = sqrt($sdlat * $sdlat
+                             + cos($lat1) * cos($lat2) * $sdlon * $sdlon);
+            if ($res > 1.0) {
+                $res = 1.0;
+            } elsif ($res < -1.0) {
+                $res = -1.0;
+            }
+            $dist += 2.0 * asin($res);
+        }
+        ($lat1, $lon1) = ($lat2, $lon2);
+    }
+
+    return $dist * $EARTH_RADIUS;
+}
+
+sub heading {
+    @_ = massage_coordinates(@_);
+
+    return unless @_;
+
+    # Compute heading from first point to last
+    my ($lat1, $lon1) = rad($_[ 0]->[0], $_[ 0]->[1]);
+    my ($lat2, $lon2) = rad($_[-1]->[0], $_[-1]->[1]);
+
+    return if $lat1 == $lat2 &&
+              $lon1 == $lon2;
+
+    my $dlon    = $lon1 - $lon2;
+    my $clat2   = cos($lat2);
+
+    my $heading = deg(atan2(sin($dlon) * $clat2,
+                            cos($lat1) * sin($lat2)
+                             - sin($lat1) * $clat2 * cos($dlon)));
+
+    $heading -= 360.0
+        if $heading >= 360.0;
+
+    return $heading;
+}
+
+1;
 __END__
 
 =head1 NAME
@@ -61,8 +136,8 @@ This document describes GPS::Babel version 0.0.1
     Brief code example(s) here showing commonest usage(s).
     This section will be as far as many users bother reading
     so make it as educational and exeplary as possible.
-  
-  
+
+
 =head1 DESCRIPTION
 
 =for author to fill in:
@@ -70,7 +145,7 @@ This document describes GPS::Babel version 0.0.1
     Use subsections (=head2, =head3) as appropriate.
 
 
-=head1 INTERFACE 
+=head1 INTERFACE
 
 =for author to fill in:
     Write a separate section listing the public components of the modules
@@ -110,7 +185,7 @@ This document describes GPS::Babel version 0.0.1
     files, and the meaning of any environment variables or properties
     that can be set. These descriptions must also include details of any
     configuration language used.
-  
+
 GPS::Babel requires no configuration files or environment variables.
 
 

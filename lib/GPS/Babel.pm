@@ -189,14 +189,12 @@ L<http://rt.cpan.org>.
 
 Andy Armstrong  C<< <andy@hexten.net> >>
 
-
 =head1 LICENCE AND COPYRIGHT
 
 Copyright (c) 2006, Andy Armstrong C<< <andy@hexten.net> >>. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
-
 
 =head1 DISCLAIMER OF WARRANTY
 

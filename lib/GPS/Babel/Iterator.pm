@@ -7,7 +7,7 @@ use Scalar::Util qw(blessed);
 
 # Iterator wrappers
 BEGIN {
-    
+
     my @funcs = qw(
         insert_before
         insert_after
@@ -16,7 +16,7 @@ BEGIN {
         previous
         next
     );
-    
+
     for my $func (@funcs) {
         my $code = sub {
             my $self = shift;
@@ -47,16 +47,16 @@ sub new {
             return $iter->();
         }
     };
-        
+
     return bless $it, $class;
 }
 
 sub with_filter {
     my ($self, @filter) = @_;
-    
+
     croak "must be called as a method"
         unless blessed($self);
-    
+
     my $it = sub {
         if (@_) {
             $self->(@_);
@@ -88,7 +88,7 @@ sub with_negated_filter {
 
 sub unique {
     my $self = shift;
-    
+
     my %seen = ( );
     my $filt = sub {
         my $obj = shift;
@@ -117,7 +117,7 @@ sub new_with_iterators {
                 return $obj if defined $obj;
                 $iter = shift @iters;
             }
-            
+
         }
     };
 
@@ -128,7 +128,7 @@ sub new_for_array {
     my ($proto, $ar) = @_;
     my $class = ref($proto) || $proto;
 
-    croak "must supply an array"
+    croak "Must supply an array"
         unless ref($ar) eq 'ARRAY' ||
                (blessed($ar) && $ar->isa('GPS::Babel::Collection'));
 
@@ -173,7 +173,7 @@ sub new_for_array {
                 return $obj if defined $obj;
                 $iter = undef;
             }
-            return undef 
+            return undef
                 if ++$pos >= scalar(@{$ar});
         }
     };
@@ -208,13 +208,26 @@ sub call_context {
     }
 }
 
+sub gather {
+    my $self = shift;
+    my $func = shift;
+
+    croak "Must supply a coderef"
+        unless ref $func eq 'CODE';
+
+    my @ar = ( );
+
+    while (my $obj = $self->()) {
+        local $_ = $obj;
+        push @ar, $func->();
+    }
+
+    return @ar;
+}
+
 sub as_array {
     my $self = shift;
-    my @ar = ( );
-    while (my $ob = $self->()) {
-        push @ar, $ob;
-    }
-    return @ar;
+    return $self->gather(sub { $_ });
 }
 
 1; # Magic true value required at end of module
@@ -238,8 +251,8 @@ This document describes GPS::Babel version 0.0.1
     Brief code example(s) here showing commonest usage(s).
     This section will be as far as many users bother reading
     so make it as educational and exeplary as possible.
-  
-  
+
+
 =head1 DESCRIPTION
 
 =for author to fill in:
@@ -247,7 +260,7 @@ This document describes GPS::Babel version 0.0.1
     Use subsections (=head2, =head3) as appropriate.
 
 
-=head1 INTERFACE 
+=head1 INTERFACE
 
 =for author to fill in:
     Write a separate section listing the public components of the modules
@@ -287,7 +300,7 @@ This document describes GPS::Babel version 0.0.1
     files, and the meaning of any environment variables or properties
     that can be set. These descriptions must also include details of any
     configuration language used.
-  
+
 GPS::Babel requires no configuration files or environment variables.
 
 

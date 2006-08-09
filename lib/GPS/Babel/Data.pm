@@ -20,8 +20,8 @@ our @ISA = qw(GPS::Babel::Node);
 
 # Module implementation here
 
-# Make accessors for containers
 BEGIN {
+    # Make accessors for containers
     for my $singular (qw(route track waypoint)) {
         my $plural = $singular . 's';
         my $accessor = sub {
@@ -29,10 +29,10 @@ BEGIN {
             return $self->collection_accessor(\$self->{$plural}, @_);
         };
         no strict 'refs';
-        # Generate singular version
-        *{"GPS::Babel::Data::$singular"} = $accessor;
-        # Generate plural version
-        *{"GPS::Babel::Data::$plural"} = $accessor;
+        # Generate accessors
+        for ($singular, $plural) {
+            *{"GPS::Babel::Data::$_"} = $accessor;
+        }
         use strict 'refs';
     }
 };
@@ -61,7 +61,7 @@ sub read_from_gpx {
 
     my %unk = ( );
 
-    # Maps gpx path to GPS::Babel::Data class.
+    # Maps gpx path to corresponding object class.
     my %path_map = (
         'gpx/bounds'            => 'GPS::Babel::Node',
         'gpx/rte'               => 'GPS::Babel::Node',
@@ -185,9 +185,11 @@ sub all_points {
     my $self = shift;
 
     return GPS::Babel::Iterator->new_with_iterators(
-        $self->waypoints->all_points,
-        $self->routes->all_points,
-        $self->tracks->all_points
+        map { $_->all_points } (
+            $self->waypoints,
+            $self->routes,
+            $self->tracks
+        )
     );
 }
 
@@ -208,7 +210,7 @@ sub write_as_gpx {
 sub clone {
     my $self = shift;
     my $new = $self->SUPER::clone();
-    for (qw(routes tracks waypoints)) {
+    for (qw(routes tracks waypoints bounds)) {
         $new->{$_} = $self->{$_}->clone()
             if defined $self->{$_};
     }

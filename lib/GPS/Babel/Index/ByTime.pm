@@ -4,8 +4,10 @@ use warnings;
 use strict;
 use Carp;
 use Scalar::Util qw(blessed);
+use List::Util qw(min);
 
 use GPS::Babel::Point;
+use GPS::Babel::Util qw(gc_distance);
 
 sub new {
     my ($proto, $obj) = @_;
@@ -27,7 +29,7 @@ sub new {
               map  { [ $_, $_->attr('time'), $_->attr('lat'), $_->attr('lon') ] } $obj->as_array;
 
     my $self = {
-        points  => \@pts
+        points  => \@pts,
     };
 
     return bless $self, $class;
@@ -71,55 +73,61 @@ sub _interp {
     return ($val1 * ($scale - $posn) + $val2 * $posn) / $scale;
 }
 
-sub _lookup {
-    my $self = shift;
-    my $time = shift;
+# Return a point that represents the position at the specified time. In an
+# array context returns the point, a flag that indicates whether the
+# returned point is synthetic and the distance in metres to the nearest real
+# point. If the time can't be matched the returned point will be undef.
+sub lookup {
+    my $self        = shift;
+    my $time        = shift;    # Time to return location for
+    my $max_dist    = shift;    # Optional maximum distance to
+                                # nearest real point.
 
     my $pos = $self->_search($time);
     if (defined $pos) {
         my $pts = $self->{points};
-        my $ptm = $pts->[$pos]->[1];
 
-        if ($ptm == $time) {
+        if ($pts->[$pos]->[1] == $time) {
             # Exact match - just return the point
-            return ( $pts->[$pos]->[0], 0, 0 );
+            my $pt = $pts->[$pos]->[0];
+            return wantarray ? ( $pt, 0, 0 ) : $pt;
         }
 
         # If we're at the first point we can't
         # interpolate with anything.
         return if $pos == 0;
 
-        my ($p1, $p2) = ( $pts->[$pos-1], $pts->[$pos] );
+        my ($p1, $p2) = @$pts[$pos-1, $pos];
 
-        my $pt = GPS::Babel::Point->new(time => $time);
         # Linear interpolation between nearest points
-        $pt->attr('lat', _interp($p1->[1], $time, $p2->[1], $p1->[2], $p2->[2]));
-        $pt->attr('lon', _interp($p1->[1], $time, $p2->[1], $p1->[3], $p2->[3]));
-        my ($e1, $e2) = ( $p1->[0]->attr('ele'), $p2->[0]->attr('ele') );
+        my $lat = _interp($p1->[1], $time, $p2->[1], $p1->[2], $p2->[2]);
+        my $lon = _interp($p1->[1], $time, $p2->[1], $p1->[3], $p2->[3]);
+
+        my $nearest = 0;
+        # Compute nearest if we need to return it or check proximity
+        if (wantarray || defined $max_dist) {
+            $nearest = min(gc_distance($lat, $lon, $p1->[0]),
+                           gc_distance($lat, $lon, $p2->[0]));
+
+            # Nearest point out of range?
+            return if defined $max_dist && $nearest > $max_dist;
+        }
+
+        # Make a new point
+        my $pt = GPS::Babel::Point->new(time => $time);
+        $pt->attr(lat => $lat);
+        $pt->attr(lon => $lon);
+        my ($e1, $e2) = map { $_->[0]->attr('ele') } ($p1, $p2);
+
         if (defined $e1 && defined $e2) {
             $pt->attr('ele', _interp($p1->[1], $time, $p2->[1], $e1, $e2));
         }
 
-        my $d1 = $time - $p1->[1];
-        my $d2 = $p2->[1] - $time;
-        my $time_diff = $d1 < $d2 ? $d1 : $d2;
-
         # Return a synthetic point
-        return ( $pt, 1, $time_diff );
+        return wantarray ? ( $pt, 1, $nearest ) : $pt;
     }
 
     return;
-}
-
-# Return a point that represents the position at the specified time. In an
-# array context returns the point, a flag that indicates whether the
-# returned point is synthetic and the number of seconds to the nearest real
-# point. If the time can't be matched the returned point will be undef.
-sub lookup {
-    my $self = shift;
-    my @r = $self->_lookup(@_);
-    return unless @r;
-    return wantarray ? @r : $r[0];
 }
 
 sub time_range {
