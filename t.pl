@@ -72,8 +72,8 @@ iterate($data->all_points, 'All points');
 iterate($data->waypoints->all_points, 'All waypoints');
 iterate($data->routes->all_points, 'All routes');
 iterate($data->route->[0]->all_points, 'First route');
-iterate($data->all_points->with_filter($near), 'Near home');
-iterate($data->all_points->with_negated_filter($near), 'Not near home');
+iterate($data->all_points->with_grep($near), 'Near home');
+iterate($data->all_points->with_grep(sub { !$near->() }), 'Not near home');
 iterate($data->route->[0]->item->[0]->all_points, 'One point');
 
 # Create a new data file from scratch

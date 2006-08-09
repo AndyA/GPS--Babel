@@ -38,7 +38,7 @@ This document describes GPS::Babel::Point version 0.0.3
 
 =head1 DESCRIPTION
 
-
+Wraps a single point.
 
 =head1 CONSTRUCTORS
 
@@ -58,12 +58,98 @@ Construct a new GPS::Babel::Point optionally providing values for attributes.
 
 =item all_points
 
-Blah
+In common with all other data objects in the GPS::Babel hierarchy all_points returns
+a GPS::Babel::Iterator that iterates over all the points the object contains. In the
+case of a GPS::Babel::Point the returned iterator will return only the point itself.
 
 =back
 
 In addition to the explictly provided all_points method AUTOLOADed accessors
-are provided for a number of attributes.
+are provided for a number of attributes. See L<GPS::Babel::Node|GPS::Babel::Node>
+for more details of the attribute mechanism. In brief you can either access attributes
+explicitly using the attr method:
+
+    $pt->attr(ele => $the_elevation);       # set attribute
+    $altitude = $pt->attr('ele');           # get attribute
+
+or by using automatically generated methods named after the attribute name:
+
+    $pt->ele($the_elevation)                # set attribute
+    $altitude = $pt->ele;
+
+The former approach allows the attribute name to be computed at runtime and allows
+access to any (possible future) attributes that are hidden by a regular method name.
+The latter approach offers cleaner syntax.
+
+The attributes that exist after reading a GPS data file will depend on the content
+of the file. The only mandatory attributes are C<lat> and C<lon>.
+
+=over
+
+=item lat
+
+=item lon
+
+=back
+
+In addition some or all of the following attributes may be present and can be set.
+
+=over
+
+=item cmt
+
+=item course
+
+=item desc
+
+=item ele
+
+=item extensions
+
+=item fix
+
+=item hdop
+
+=item name
+
+=item pdop
+
+=item sat
+
+=item speed
+
+=item sym
+
+=item time
+
+=item type
+
+=item url
+
+=item vdop
+
+=back
+
+Depending on type of the GPS data file you read attributes not listed above may
+also be present; to find all attribute names used for a given file use something
+like this:
+
+    #!/usr/bin/perl -w
+    use strict;
+    use GPS::Babel;
+
+    $| = 1;
+
+    my $babel = GPS::Babel->new();
+    my $data  = $babel->read('name' => 'sample.gpx', 'fmt' => 'gpx');
+    my %found = ( );
+
+    my $iter = $data->all_points;
+    while (my $pt = $iter->()) {
+        $found{$_}++ for ($pt->attr_names);
+    }
+
+    print "$_\n" for sort keys %found;
 
 =head1 BUGS AND LIMITATIONS
 

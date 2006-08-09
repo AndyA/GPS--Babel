@@ -53,7 +53,7 @@ sub new {
     return bless $it, $class;
 }
 
-sub with_filter {
+sub with_grep($&) {
     my ($self, $filt) = @_;
 
     croak "Must supply a coderef"
@@ -73,20 +73,7 @@ sub with_filter {
     return bless $it, ref($self);
 }
 
-sub with_negated_filter {
-    my ($self, @filter) = @_;
-
-    my $nfilt = sub {
-        for my $filt (@filter) {
-            return 1 unless $filt->(@_);
-        }
-        return 0;
-    };
-
-    return $self->with_filter($nfilt);
-}
-
-sub with_map {
+sub with_map($&) {
     my ($self, $func) = @_;
 
     croak "Must supply a coderef"
@@ -106,7 +93,7 @@ sub with_map {
     }
 }
 
-sub unique {
+sub unique($) {
     my $self = shift;
 
     my %seen = ( );
@@ -117,10 +104,10 @@ sub unique {
         return 1;
     };
 
-    return $self->with_filter($filt);
+    return $self->with_grep($filt);
 }
 
-sub new_with_iterators {
+sub new_with_iterators($) {
     my $proto = shift;
     my $class = ref($proto) || $proto;
 
@@ -144,7 +131,7 @@ sub new_with_iterators {
     return bless $it, $class;
 }
 
-sub new_for_array {
+sub new_for_array($$) {
     my ($proto, $ar) = @_;
     my $class = ref($proto) || $proto;
 
@@ -201,7 +188,7 @@ sub new_for_array {
     return bless $it, $class;
 }
 
-sub new_for_object {
+sub new_for_object($$) {
     my ($proto, $obj) = @_;
 
     my $it = sub {
@@ -209,6 +196,8 @@ sub new_for_object {
         $obj = undef;
         return $res;
     };
+    # TODO: That ain't right... Should call the right
+    # constructor in a subclass.
     return GPS::Babel::Iterator->new($it);
 }
 
@@ -240,7 +229,7 @@ sub as_array {
     return @ar;
 }
 
-sub gather {
+sub gather($&) {
     my $self = shift;
     my $func = shift;
 
