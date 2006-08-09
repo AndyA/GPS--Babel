@@ -6,6 +6,7 @@ Makefile.PL
 README
 lib/GPS/Babel/Collection.pm
 lib/GPS/Babel/Data.pm
+lib/GPS/Babel/Index/ByTime.pm
 lib/GPS/Babel/Iterator.pm
 lib/GPS/Babel/Node.pm
 lib/GPS/Babel/Object.pm
