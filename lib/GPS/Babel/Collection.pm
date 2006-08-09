@@ -33,7 +33,7 @@ sub clone {
     my $self = shift;
     my $new  = [ ];
     for (@{$self}) {
-        push @{$new}, GPS::Babel::Util::clone_object($_);
+        push @{$new}, GPS::Babel::Object::_clone_object($_);
     }
     return bless $new, ref($self);
 }

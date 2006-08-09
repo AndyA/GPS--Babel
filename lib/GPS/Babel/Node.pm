@@ -42,7 +42,7 @@ sub clone {
     $new->{item} = $self->{item}->clone()
         if $self->{item};
     while (my ($n, $v) = each(%{$self->{attr}})) {
-        $new->{attr}->{$n} = GPS::Babel::Util::clone_object($v);
+        $new->{attr}->{$n} = GPS::Babel::Object::_clone_object($v);
     }
     return bless $new, ref($self);
 }

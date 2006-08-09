@@ -7,14 +7,14 @@ use Scalar::Util qw(blessed);
 
 use Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(clone_object gc_distance heading);
+our @EXPORT_OK = qw(_clone_object gc_distance heading);
 
 my $EARTH_RADIUS = 6378137.0;
 my $PI           = 4 * atan2(1, 1);
 my $DEG_TO_RAD   = $PI / 180.0;
 my $RAD_TO_DEG   = 180.0 / $PI;
 
-sub massage_coordinates {
+sub _massage_coordinates {
     my @a = ( );
     while (@_) {
         if (@_ >= 2 && !ref($_[0]) && !ref($_[1])) {
@@ -41,37 +41,27 @@ sub massage_coordinates {
     return @a;
 }
 
-# Utility function: clone an arbitrary object. Not a method
-sub clone_object {
-    my $obj = shift;
-    return $obj
-        unless ref $obj;
-    return $obj->clone()
-        if blessed($obj) && $obj->can('clone');
-    return $obj;
-}
-
-sub deg {
+sub _deg {
     return map { $_ * $RAD_TO_DEG } @_;
 }
 
-sub rad {
+sub _rad {
     return map { $_ * $DEG_TO_RAD } @_;
 }
 
 # From
 #  http://perldoc.perl.org/functions/sin.html
-sub asin {
+sub _asin {
     atan2($_[0], sqrt(1 - $_[0] * $_[0]))
 }
 
 sub gc_distance {
-    @_ = massage_coordinates(@_);
+    @_ = _massage_coordinates(@_);
 
     my $dist = 0;
     my ($lat1, $lon1);
     while (my $pt = shift) {
-        my ($lat2, $lon2) = rad($pt->[0], $pt->[1]);
+        my ($lat2, $lon2) = _rad($pt->[0], $pt->[1]);
         if (defined $lat1) {
             my $sdlat = sin(($lat1 - $lat2) / 2.0);
             my $sdlon = sin(($lon1 - $lon2) / 2.0);
@@ -82,7 +72,7 @@ sub gc_distance {
             } elsif ($res < -1.0) {
                 $res = -1.0;
             }
-            $dist += 2.0 * asin($res);
+            $dist += 2.0 * _asin($res);
         }
         ($lat1, $lon1) = ($lat2, $lon2);
     }
@@ -91,13 +81,13 @@ sub gc_distance {
 }
 
 sub heading {
-    @_ = massage_coordinates(@_);
+    @_ = _massage_coordinates(@_);
 
     return unless @_;
 
     # Compute heading from first point to last
-    my ($lat1, $lon1) = rad($_[ 0]->[0], $_[ 0]->[1]);
-    my ($lat2, $lon2) = rad($_[-1]->[0], $_[-1]->[1]);
+    my ($lat1, $lon1) = _rad($_[ 0]->[0], $_[ 0]->[1]);
+    my ($lat2, $lon2) = _rad($_[-1]->[0], $_[-1]->[1]);
 
     return if $lat1 == $lat2 &&
               $lon1 == $lon2;
@@ -105,12 +95,11 @@ sub heading {
     my $dlon    = $lon1 - $lon2;
     my $clat2   = cos($lat2);
 
-    my $heading = deg(atan2(sin($dlon) * $clat2,
-                            cos($lat1) * sin($lat2)
+    my $heading = _deg(atan2(sin($dlon) * $clat2,
+                             cos($lat1) * sin($lat2)
                              - sin($lat1) * $clat2 * cos($dlon)));
 
-    $heading -= 360.0
-        if $heading >= 360.0;
+    $heading -= 360.0 if $heading >= 360.0;
 
     return $heading;
 }
@@ -120,108 +109,82 @@ __END__
 
 =head1 NAME
 
-GPS::Babel - [One line description of module's purpose here]
-
+GPS::Babel::Util - Various utility functions for use with L<GPS::Babel|GPS::Babel>
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.1
-
+This document describes GPS::Babel::Util version 0.0.3
 
 =head1 SYNOPSIS
 
-    use GPS::Babel;
+    use GPS::Babel:Util qw(gc_distance heading);
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
+    my $distance = gc_distance($point1, $point2);
+    my $track_length = gc_distance(@points);
 
+    my $direction_home = heading($here, $home);
 
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+When working with geographical locations it's often useful to be able to measure the
+approximate distance between points - or the length of tracks - and to determine the
+heading from one point to another.
 
+GPS::Babel::Util provides functions (gc_distance and heading) that perform these
+calculations. Their interface can be used either with GPS::Babel data or with discrete
+latitude and longitude values in a number of formats.
 
 =head1 INTERFACE
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=over
 
+=item gc_distance(point ...)
 
-=head1 DIAGNOSTICS
+Compute the Great Circle distance between two or more points. For more information about
+GC distances (and in particular how they differ from on-the-ground-distances) see:
 
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+L<http://en.wikipedia.org/wiki/Great-circle_distance>
+
+If more than two points are supplied the distance will be the total of the distances
+between all the points - i.e. the length of the route they describe. Each point may be
+specified as
 
 =over
 
-=item C<< Error message here, perhaps with %s placeholders >>
+=item a pair of scalars: latitude, longitude
 
-[Description of error here]
+    my $distance = gc_distance(57, -2, 56, -1);
 
-=item C<< Another error message here >>
+=item a reference to a two element array containing latitude, longitude
 
-[Description of error here]
+    my @HOME = ( 57, -2 );
+    my $distance = gc_distance(\@HOME, [56, -1]);
 
-[Et cetera, et cetera]
+=item a reference to a hash with keys 'lat' and 'lon'
+
+    my %HOME = ( lat => 57, lon => -2 );
+    my $distance = gc_distance(\%HOME, 56, -1);
+
+=item a reference to a GPS::Babel::Point
+
+    my $home = GPS::Babel::Point->new(lat => 57, lon -2);
+    my $distance = gc_distance($home, [56, -1]);
 
 =back
 
+All of the above calls to gc_distance are equivalent.
 
-=head1 CONFIGURATION AND ENVIRONMENT
+=item heading($point, $point)
 
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
+Compute the heading in degrees from one point to another. The returned value is the
+compass heading you would take from the first point to pass through the second.
 
-GPS::Babel requires no configuration files or environment variables.
+If the heading can't be computed (perhaps because the two points are the same) undef
+will be returned.
 
-
-=head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
+Coordinates may be passed in the same formats that gc_distance supports.
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
@@ -229,11 +192,9 @@ Please report any bugs or feature requests to
 C<bug-gps-babel@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
-
 =head1 AUTHOR
 
 Andy Armstrong  C<< <andy@hexten.net> >>
-
 
 =head1 LICENCE AND COPYRIGHT
 
@@ -241,7 +202,6 @@ Copyright (c) 2006, Andy Armstrong C<< <andy@hexten.net> >>. All rights reserved
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
-
 
 =head1 DISCLAIMER OF WARRANTY
 

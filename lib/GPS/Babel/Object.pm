@@ -6,6 +6,16 @@ use Carp;
 use Time::Local;
 use Scalar::Util qw(blessed);
 
+# Utility function: clone an arbitrary object. Not a method
+sub _clone_object {
+    my $obj = shift;
+    return $obj
+        unless ref $obj;
+    return $obj->clone()
+        if blessed($obj) && $obj->can('clone');
+    return $obj;
+}
+
 sub append {
     my $self = shift;
     for my $a (@_) {
