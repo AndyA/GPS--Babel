@@ -44,7 +44,7 @@ sub read {
     croak "gpsbabel failed ($!)"
         if $fh->eof;
     my $data = GPS::Babel::Data->new();
-    $data->read_from_gpx($fh);
+    $data->_read_from_gpx($fh);
     $fh->close();
     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
     return $data;
@@ -63,7 +63,7 @@ sub write {
     #print join(' ', @args), "\n";
     my $fh = IO::Pipe->new();
     $fh->writer(@args);
-    $data->write_as_gpx($fh);
+    $data->_write_as_gpx($fh);
     $fh->close() or croak "Write error ($!)";
     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
 }

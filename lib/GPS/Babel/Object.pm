@@ -6,16 +6,6 @@ use Carp;
 use Time::Local;
 use Scalar::Util qw(blessed);
 
-# Utility function: clone an arbitrary object. Not a method
-sub _clone_object {
-    my $obj = shift;
-    return $obj
-        unless ref $obj;
-    return $obj->clone()
-        if blessed($obj) && $obj->can('clone');
-    return $obj;
-}
-
 sub append {
     my $self = shift;
     for my $a (@_) {
@@ -37,7 +27,7 @@ sub as_array {
     return shift;
 }
 
-sub from_gpx_time {
+sub _from_gpx_time {
     my ($self, $tm) = @_;
 
     unless ($tm =~ /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z$/) {
@@ -49,7 +39,7 @@ sub from_gpx_time {
     return timegm($se, $mi, $hr, $da, $mo-1, $yr);
 }
 
-sub to_gpx_time {
+sub _to_gpx_time {
     my ($self, $tm) = @_;
 
     my ($se, $mi, $hr, $da, $mo, $yr) = gmtime($tm);
@@ -59,23 +49,33 @@ sub to_gpx_time {
 
 # Subclass to provide per-object conversion semantics
 
-sub from_gpx {
+sub _from_gpx {
     my ($self, $name, $val) = @_;
     confess unless defined $name;
     if ($name eq 'time') {
-        return $self->from_gpx_time($val);
+        return $self->_from_gpx_time($val);
     } else {
         return $val;
     }
 }
 
-sub to_gpx {
+sub _to_gpx {
     my ($self, $name, $val) = @_;
     if ($name eq 'time') {
-        return $self->to_gpx_time($val);
+        return $self->_to_gpx_time($val);
     } else {
         return $val;
     }
+}
+
+# Utility function: clone an arbitrary object. Not a method
+sub _clone_object {
+    my $obj = shift;
+    return $obj
+        unless ref $obj;
+    return $obj->clone()
+        if blessed($obj) && $obj->can('clone');
+    return $obj;
 }
 
 1; # Magic true value required at end of module

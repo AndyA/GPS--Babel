@@ -20,7 +20,7 @@ BEGIN {
     for my $func (@funcs) {
         my $code = sub {
             my $self = shift;
-            return $self->call_context($func, @_);
+            return $self->_call_context($func, @_);
         };
         no strict 'refs';
         *{"GPS::Babel::Iterator::$func"} = $code;
@@ -143,7 +143,7 @@ sub new_for_array {
         if (@_) {
             my $cmd = shift;
             if ($cmd eq 'context') {
-                my $context = defined $iter ? $iter->context : undef;
+                my $context = defined $iter ? $iter->_context : undef;
                 return $context || $it;
             } elsif ($cmd eq 'insert_before') {
                 splice @{$ar}, $pos++, 0, shift;
@@ -192,14 +192,14 @@ sub new_for_object {
     return GPS::Babel::Iterator->new($it);
 }
 
-sub context {
+sub _context {
     my $self = shift;
     return $self->('context', @_);
 }
 
-sub call_context {
+sub _call_context {
     my $self = shift;
-    my $context = $self->context;
+    my $context = $self->_context;
     if (defined($context)) {
         $context->(@_);
     } else {

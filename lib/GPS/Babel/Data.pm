@@ -26,7 +26,7 @@ BEGIN {
         my $plural = $singular . 's';
         my $accessor = sub {
             my $self = shift;
-            return $self->collection_accessor(\$self->{$plural}, @_);
+            return $self->_collection_accessor(\$self->{$plural}, @_);
         };
         no strict 'refs';
         # Generate accessors
@@ -46,7 +46,7 @@ sub new {
 	return bless $self, $class;
 }
 
-sub read_from_gpx {
+sub _read_from_gpx {
     my ($self, $fh) = @_;
 
     my $p = XML::Parser->new();
@@ -92,9 +92,9 @@ sub read_from_gpx {
             my $obj = $con->($cls);
             # Not sure about this - makes it more complex for users
             # to create new objects if this is a dependency.
-            #$obj->set_attr($path, '_gpx_element', $elem);
+            #$obj->_set_attr($path, '_gpx_element', $elem);
             for (keys %attr) {
-                $obj->set_attr($path, $_, $attr{$_});
+                $obj->_set_attr($path, $_, $attr{$_});
             }
 
             push @work, [ scalar(@path), $obj ];
@@ -126,7 +126,7 @@ sub read_from_gpx {
             my $top = $work[-1];
             my $kpath = join('/', @path[$top->[0] .. $#path]);
             my $obj = $top->[1];
-            $obj->set_attr($path, $kpath, $obj->from_gpx($kpath, $val));
+            $obj->_set_attr($path, $kpath, $obj->_from_gpx($kpath, $val));
         }
 
         my $celem = pop @path;
@@ -145,7 +145,7 @@ sub read_from_gpx {
     $p->parse($fh);
 }
 
-sub set_attr {
+sub _set_attr {
     my ($self, $path, $name, $value) = @_;
     if ($name eq '') {
         # All spare text ends up here - it should just be whitespace
@@ -153,7 +153,7 @@ sub set_attr {
             confess "Junk around <gpx> </gpx>";
         }
     } else {
-        $self->SUPER::set_attr($path, $name, $value);
+        $self->SUPER::_set_attr($path, $name, $value);
     }
 }
 
@@ -193,17 +193,17 @@ sub all_points {
     );
 }
 
-sub write_contents_as_gpx {
+sub _write_contents_as_gpx {
     my ($self, $fh, $indent, $path) = @_;
-    $self->waypoints->write_as_gpx($fh, $indent, 'wpt');
-    $self->routes->write_as_gpx($fh, $indent, 'rte/rtept');
-    $self->tracks->write_as_gpx($fh, $indent, 'trk/trkseg/trkpt');
+    $self->waypoints->_write_as_gpx($fh, $indent, 'wpt');
+    $self->routes->_write_as_gpx($fh, $indent, 'rte/rtept');
+    $self->tracks->_write_as_gpx($fh, $indent, 'trk/trkseg/trkpt');
 }
 
-sub write_as_gpx {
+sub _write_as_gpx {
     my ($self, $fh) = @_;
     $self->check_structure;
-    $self->SUPER::write_as_gpx($fh, 0, 'gpx',
+    $self->SUPER::_write_as_gpx($fh, 0, 'gpx',
         qw(waypoints routes tracks bounds));
 }
 

@@ -76,7 +76,7 @@ sub attr_names {
     return keys %{$self->{attr}};
 }
 
-sub collection_accessor {
+sub _collection_accessor {
     my $self = shift;
     my $ref  = shift;
     if (@_) {
@@ -98,7 +98,7 @@ sub collection_accessor {
 
 sub item {
     my $self = shift;
-    return $self->collection_accessor(\$self->{item}, @_);
+    return $self->_collection_accessor(\$self->{item}, @_);
 }
 
 sub items {
@@ -126,9 +126,9 @@ sub empty {
     $self->item->empty();
 }
 
-sub set_attr {
+sub _set_attr {
     my ($self, $path, $name, $value) = @_;
-    #print "set_attr($self, \"$path\", \"$name\", \"$value\")\n";
+    #print "_set_attr($self, \"$path\", \"$name\", \"$value\")\n";
     $self->attr($name, $value);
 }
 
@@ -160,39 +160,39 @@ sub all_nodes {
     return GPS::Babel::Iterator->new($it);
 }
 
-sub open_tag {
+sub _open_tag {
     my ($self, $elem, $attr) = @_;
     my $tag = '<' . $elem;
     if (defined $attr) {
         while (my($n, $v) = each(%{$attr})) {
-            $tag .= ' ' . $n . '="' . encode_entities($self->to_gpx($n, $v)) . '"';
+            $tag .= ' ' . $n . '="' . encode_entities($self->_to_gpx($n, $v)) . '"';
         }
     }
     return $tag . '>';
 }
 
-sub close_tag {
+sub _close_tag {
     my ($self, $elem) = @_;
     return "</$elem>";
 }
 
-sub encode_as_attr {
+sub _encode_as_attr {
     my $self = shift;
     return qw(lat lon minlat minlon maxlat maxlon);
 }
 
-sub write_contents_as_gpx {
+sub _write_contents_as_gpx {
     my ($self, $fh, $indent, $path) = @_;
-    $self->item->write_as_gpx($fh, $indent, $path);
+    $self->item->_write_as_gpx($fh, $indent, $path);
 }
 
-sub write_str {
+sub _write_str {
     my $self = shift;
     my $fh   = shift;
     $fh->print(@_) or croak "Write error ($!)";
 }
 
-sub write_as_gpx {
+sub _write_as_gpx {
     my ($self, $fh, $indent, $path, @exc) = @_;
     my $elem;
     my $spc = '    ';
@@ -204,7 +204,7 @@ sub write_as_gpx {
     }
     my %attr = ( );
     my %item = ( );
-    my @as_attr = $self->encode_as_attr();
+    my @as_attr = $self->_encode_as_attr();
     my %is_attr = ( );
     @is_attr{@as_attr} = @as_attr;
     my %exc = ( );
@@ -217,14 +217,14 @@ sub write_as_gpx {
             $item{$n} = $v;
         }
     }
-    $fh->print($pad, $self->open_tag($elem, \%attr), "\n");
+    $fh->print($pad, $self->_open_tag($elem, \%attr), "\n");
     while (my($n, $v) = each(%item)) {
-        $self->write_str($fh, $pad, $spc, $self->open_tag($n));
-        $self->write_str($fh, encode_entities($self->to_gpx($n, $v)));
-        $self->write_str($fh, $self->close_tag($n), "\n");
+        $self->_write_str($fh, $pad, $spc, $self->_open_tag($n));
+        $self->_write_str($fh, encode_entities($self->_to_gpx($n, $v)));
+        $self->_write_str($fh, $self->_close_tag($n), "\n");
     }
-    $self->write_contents_as_gpx($fh, $indent + 1, $path);
-    $self->write_str($fh, $pad, $self->close_tag($elem), "\n");
+    $self->_write_contents_as_gpx($fh, $indent + 1, $path);
+    $self->_write_str($fh, $pad, $self->_close_tag($elem), "\n");
 }
 
 1; # Magic true value required at end of module

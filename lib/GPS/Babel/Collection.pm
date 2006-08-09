@@ -49,10 +49,10 @@ sub all_points {
     return GPS::Babel::Iterator->new_for_array($self);
 }
 
-sub write_as_gpx {
+sub _write_as_gpx {
     my ($self, $fh, $indent, $path) = @_;
     for my $nd (@{$self}) {
-        $nd->write_as_gpx($fh, $indent, $path);
+        $nd->_write_as_gpx($fh, $indent, $path);
     }
 }
 
