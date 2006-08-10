@@ -53,7 +53,7 @@ sub new {
     return bless $it, $class;
 }
 
-sub with_grep($&) {
+sub with_grep {
     my ($self, $filt) = @_;
 
     croak "Must supply a coderef"
@@ -73,7 +73,7 @@ sub with_grep($&) {
     return bless $it, ref($self);
 }
 
-sub with_map($&) {
+sub with_map {
     my ($self, $func) = @_;
 
     croak "Must supply a coderef"
@@ -93,7 +93,7 @@ sub with_map($&) {
     }
 }
 
-sub unique($) {
+sub unique {
     my $self = shift;
 
     my %seen = ( );
@@ -131,7 +131,7 @@ sub new_with_iterators {
     return bless $it, $class;
 }
 
-sub new_for_array($$) {
+sub new_for_array {
     my ($proto, $ar) = @_;
     my $class = ref($proto) || $proto;
 
@@ -188,7 +188,7 @@ sub new_for_array($$) {
     return bless $it, $class;
 }
 
-sub new_for_object($$) {
+sub new_for_object {
     my ($proto, $obj) = @_;
 
     my $it = sub {
@@ -229,7 +229,7 @@ sub as_array {
     return @ar;
 }
 
-sub gather($&) {
+sub gather {
     my $self = shift;
     my $func = shift;
 

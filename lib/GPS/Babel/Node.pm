@@ -237,17 +237,15 @@ GPS::Babel - [One line description of module's purpose here]
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.2
+This document describes GPS::Babel::Node version 0.0.2
 
 
 =head1 SYNOPSIS
 
-    use GPS::Babel;
+    use GPS::Babel::Node;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
+    my $nd = GPS::Babel::Node->new;
+    $nd->name('My route');
 
 
 =head1 DESCRIPTION
@@ -261,7 +259,7 @@ This document describes GPS::Babel version 0.0.2
 
 =over
 
-=item new( args )
+=item new( attributes )
 
 Describe constructor
 
@@ -271,9 +269,27 @@ Describe constructor
 
 =over
 
-=item method( args )
+=item add
 
-Describe method
+=item all_nodes
+
+=item all_points
+
+=item attr
+
+=item attr_names
+
+=item clone
+
+=item count
+
+=item empty
+
+=item item
+
+=item items
+
+C<items> is a synonym for C<item>
 
 =back
 

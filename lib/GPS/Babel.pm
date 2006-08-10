@@ -130,7 +130,7 @@ simple object oriented interface to GPS data.
 
 =over
 
-=item new( exe => exename )
+=item new( [ exe => exename ] )
 
 Constructs a new object optionally supplying the pathname of the
 instance of gpsbabel that should be used. If the exe option is omitted
