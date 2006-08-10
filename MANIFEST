@@ -15,6 +15,5 @@ lib/GPS/Babel/Util.pm
 lib/GPS/Babel.pm
 t.pl
 t/00.load.t
-t/perlcritic.t
 t/pod-coverage.t
 t/pod.t

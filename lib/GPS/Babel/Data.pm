@@ -121,7 +121,7 @@ sub _read_from_gpx {
             my $obj = pop @work;
             my $top = $work[-1];
             my $kpath = join('/', @path[$top->[0] .. $#path]);
-            $top->[1]->add_child($path, $kpath, $obj->[1]);
+            $top->[1]->_add_child($path, $kpath, $obj->[1]);
         } else {
             my $top = $work[-1];
             my $kpath = join('/', @path[$top->[0] .. $#path]);
@@ -149,7 +149,7 @@ sub _set_attr {
     my ($self, $path, $name, $value) = @_;
     if ($name eq '') {
         # All spare text ends up here - it should just be whitespace
-        if (length($self->tidy_text($value)) > 0) {
+        if (length($self->_tidy_text($value)) > 0) {
             confess "Junk around <gpx> </gpx>";
         }
     } else {
@@ -157,9 +157,9 @@ sub _set_attr {
     }
 }
 
-# Subclass add_child to stash our attributes into different containers
+# Subclass _add_child to stash our attributes into different containers
 
-sub add_child {
+sub _add_child {
     my ($self, $path, $name, $obj) = @_;
     if ($name eq 'bounds') {
         $self->{attr}->{bounds} = $obj;
@@ -171,7 +171,7 @@ sub add_child {
         $self->tracks->add($obj);
     } else {
         print "*** Warning - unhandled object at $name\n";
-        $self->SUPER::add_child($path, $name, $obj);
+        $self->SUPER::_add_child($path, $name, $obj);
     }
 }
 
@@ -270,6 +270,8 @@ L<GPS::Babel::Object|GPS::Babel::Object>.
 
 Constructs a new object. Any arguments to the constructor are added to
 the array.
+
+=back
 
 =head1 BUGS AND LIMITATIONS
 

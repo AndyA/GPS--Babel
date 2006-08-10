@@ -113,7 +113,7 @@ GPS::Babel::Util - Various utility functions for use with L<GPS::Babel|GPS::Babe
 
 =head1 VERSION
 
-This document describes GPS::Babel::Util version 0.0.3
+This document describes GPS::Babel::Util version 0.0.2
 
 =head1 SYNOPSIS
 
@@ -183,6 +183,8 @@ If the heading can't be computed (perhaps because the two points are the same) u
 will be returned.
 
 Coordinates may be passed in the same formats that gc_distance supports.
+
+=back
 
 =head1 BUGS AND LIMITATIONS
 

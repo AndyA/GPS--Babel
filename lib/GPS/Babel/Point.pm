@@ -30,7 +30,7 @@ GPS::Babel::Point - Represents a waypoint, route point or track point in GPS dat
 
 =head1 VERSION
 
-This document describes GPS::Babel::Point version 0.0.3
+This document describes GPS::Babel::Point version 0.0.2
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,11 @@ of the file. The only mandatory attributes are C<lat> and C<lon>.
 
 =item lat
 
+The latitude of the point in decimal degrees.
+
 =item lon
+
+The longitude of the point in decimal degrees.
 
 =back
 
@@ -96,37 +100,95 @@ In addition some or all of the following attributes may be present and can be se
 
 =over
 
-=item cmt
+=item time
 
-=item course
-
-=item desc
-
-=item ele
-
-=item extensions
-
-=item fix
-
-=item hdop
+The time when this point was recorded by the GPS as unix time.
 
 =item name
 
-=item pdop
+The short name of this point.
 
-=item sat
+=item cmt
+
+The comment associated with this point.
+
+=item desc
+
+The description of this point.
+
+=item src
+
+Text describing the source of this waypoint.
+
+=item ele
+
+The elevation of the point in metres. Negative values indicate points below sea level.
 
 =item speed
 
+The speed of travel at this point in metres per second. Only points within a track
+should have a C<speed> attribute.
+
+=item course
+
+The direction of travel at this point in decimal degrees. Depending on the source of
+the data this may have been calculated as the heading to the next point in a track
+or the heading from the previous point.
+
+Only points within a track should have a C<course> attribute.
+
+=item fix
+
+Type of GPS fix.
+
+=item hdop
+
+Horizontal Dilution of Precision.
+
+=item vdop
+
+Vertical Dilution of Precision.
+
+=item pdop
+
+Position Dilution of Precision: a figure indicating the current precision of
+the GPS at the time the point was recorded.
+
+=item sat
+
+The number of satellites that were used to obtain the fix for this point.
+
 =item sym
 
-=item time
+Waypoint symbol.
 
 =item type
 
+Type (category) of waypoint.
+
 =item url
 
-=item vdop
+URL associated with the waypoint.
+
+=item urlname
+
+Text to display on hyperlink generated from C<url> (above).
+
+=item magvar
+
+Magnetic variation of the point.
+
+=item geoidheight
+
+Geoid height of the point.
+
+=item ageofdgpsdata
+
+Time since last DGPS fix.
+
+=item dgpsid
+
+DGPS station ID.
 
 =back
 
@@ -137,8 +199,6 @@ like this:
     #!/usr/bin/perl -w
     use strict;
     use GPS::Babel;
-
-    $| = 1;
 
     my $babel = GPS::Babel->new();
     my $data  = $babel->read('name' => 'sample.gpx', 'fmt' => 'gpx');
@@ -168,11 +228,9 @@ Please report any bugs or feature requests to
 C<bug-gps-babel@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
-
 =head1 AUTHOR
 
 Andy Armstrong  C<< <andy@hexten.net> >>
-
 
 =head1 LICENCE AND COPYRIGHT
 
@@ -180,7 +238,6 @@ Copyright (c) 2006, Andy Armstrong C<< <andy@hexten.net> >>. All rights reserved
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
-
 
 =head1 DISCLAIMER OF WARRANTY
 
