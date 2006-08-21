@@ -1,0 +1,1316 @@
+new_for_array with:
+GPS::Babel::Point=HASH(0x18957a8)
+GPS::Babel::Point=HASH(0x5871f4)
+GPS::Babel::Point=HASH(0x587284)
+GPS::Babel::Point=HASH(0x1896760)
+GPS::Babel::Point=HASH(0x1896c0c)
+GPS::Babel::Point=HASH(0x1896ce4)
+GPS::Babel::Point=HASH(0x1896d74)
+GPS::Babel::Point=HASH(0x1894030)
+GPS::Babel::Point=HASH(0x1895574)
+GPS::Babel::Point=HASH(0x18956a0)
+GPS::Babel::Point=HASH(0x189cd2c)
+GPS::Babel::Point=HASH(0x1896e1c)
+GPS::Babel::Point=HASH(0x1896eac)
+GPS::Babel::Point=HASH(0x1896f3c)
+GPS::Babel::Point=HASH(0x1896fcc)
+GPS::Babel::Point=HASH(0x1897478)
+GPS::Babel::Point=HASH(0x1897508)
+GPS::Babel::Point=HASH(0x1897598)
+GPS::Babel::Point=HASH(0x1897628)
+GPS::Babel::Point=HASH(0x18976b8)
+GPS::Babel::Point=HASH(0x1897760)
+GPS::Babel::Point=HASH(0x1897c0c)
+GPS::Babel::Point=HASH(0x1897c9c)
+GPS::Babel::Point=HASH(0x1897d2c)
+GPS::Babel::Point=HASH(0x1897dbc)
+new_for_array with:
+GPS::Babel::Object=HASH(0x1897db0)
+new_for_array with:
+new_for_array with:
+GPS::Babel::Point=HASH(0x1897ef4)
+GPS::Babel::Point=HASH(0x1897fb4)
+GPS::Babel::Point=HASH(0x1898448)
+GPS::Babel::Point=HASH(0x18984c0)
+GPS::Babel::Point=HASH(0x1898538)
+GPS::Babel::Point=HASH(0x18985b0)
+GPS::Babel::Point=HASH(0x1898628)
+GPS::Babel::Point=HASH(0x18986a0)
+GPS::Babel::Point=HASH(0x1898718)
+GPS::Babel::Point=HASH(0x1898790)
+$VAR1 = bless( {
+                 'waypoints' => bless( [
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'ACHNR1',
+                                                              'lat' => '50.937595000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0001',
+                                                              'lon' => '6.883321000',
+                                                              'cmt' => 'ACHNR1'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'ACHNR2',
+                                                              'lat' => '50.937510000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0002',
+                                                              'lon' => '6.885123000',
+                                                              'cmt' => 'ACHNR2'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'ACHNRS',
+                                                              'lat' => '50.937595000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0003',
+                                                              'lon' => '6.882591000',
+                                                              'cmt' => 'ACHNRS'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'lat' => 1,
+                                                              'name' => 'Dummy',
+                                                              'lon' => 1
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'lat' => 1,
+                                                              'name' => 'Dummy',
+                                                              'lon' => 1
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'L100',
+                                                              'lat' => '50.936308000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0006',
+                                                              'lon' => '6.924562000',
+                                                              'cmt' => 'L100'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'L1001',
+                                                              'lat' => '50.920901000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0007',
+                                                              'lon' => '6.932673000',
+                                                              'cmt' => 'L1001'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'LXMBR1',
+                                                              'lat' => '50.920901000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0008',
+                                                              'lon' => '6.933060000',
+                                                              'cmt' => 'LXMBR1'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'LXMBR2',
+                                                              'lat' => '50.920901000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0009',
+                                                              'lon' => '6.933060000',
+                                                              'cmt' => 'LXMBR2'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'LXMBRG',
+                                                              'lat' => '50.920773000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0010',
+                                                              'lon' => '6.932931000',
+                                                              'cmt' => 'LXMBRG'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTR10',
+                                                              'lat' => '50.937381000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0011',
+                                                              'lon' => '6.882334000',
+                                                              'cmt' => 'MLTR10'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN1',
+                                                              'lat' => '50.968881000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0012',
+                                                              'lon' => '6.869330000',
+                                                              'cmt' => 'MLTRN1'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN2',
+                                                              'lat' => '50.968752000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0013',
+                                                              'lon' => '6.869287000',
+                                                              'cmt' => 'MLTRN2'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN3',
+                                                              'lat' => '50.947680000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0014',
+                                                              'lon' => '6.874523000',
+                                                              'cmt' => 'MLTRN3'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN4',
+                                                              'lat' => '50.938110000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0015',
+                                                              'lon' => '6.883321000',
+                                                              'cmt' => 'MLTRN4'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN5',
+                                                              'lat' => '50.937767000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0016',
+                                                              'lon' => '6.883321000',
+                                                              'cmt' => 'MLTRN5'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN6',
+                                                              'lat' => '50.937595000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0017',
+                                                              'lon' => '6.883321000',
+                                                              'cmt' => 'MLTRN6'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN7',
+                                                              'lat' => '50.937123000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0018',
+                                                              'lon' => '6.883407000',
+                                                              'cmt' => 'MLTRN7'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN8',
+                                                              'lat' => '50.936866000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0019',
+                                                              'lon' => '6.883149000',
+                                                              'cmt' => 'MLTRN8'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MLTRN9',
+                                                              'lat' => '50.936823000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0020',
+                                                              'lon' => '6.882849000',
+                                                              'cmt' => 'MLTRN9'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'MILITARRINGSTRASSE',
+                                                              'lat' => '50.968881000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0021',
+                                                              'lon' => '6.869330000',
+                                                              'cmt' => 'MILITARRINGSTRASSE'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'ROAD',
+                                                              'lat' => '50.936565000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0022',
+                                                              'lon' => '6.924133000',
+                                                              'cmt' => 'ROAD'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'UNVRS1',
+                                                              'lat' => '50.930943000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0023',
+                                                              'lon' => '6.926408000',
+                                                              'cmt' => 'UNVRS1'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'UNVRS2',
+                                                              'lat' => '50.929999000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0024',
+                                                              'lon' => '6.926966000',
+                                                              'cmt' => 'UNVRS2'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'desc' => 'UNVRST',
+                                                              'lat' => '50.933862000',
+                                                              'sym' => 'Waypoint',
+                                                              'name' => 'PT0025',
+                                                              'lon' => '6.924648000',
+                                                              'cmt' => 'UNVRST'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'lat' => '57.3',
+                                                              'lon' => '-2'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'lat' => '54.3562',
+                                                              'name' => 'where?',
+                                                              'lon' => '0.7837'
+                                                            }
+                                                }, 'GPS::Babel::Point' ),
+                                         bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'lat' => '50.968881000',
+                                                              'desc' => 'MILITARRINGSTRASSE',
+                                                              'name' => 'PT0026',
+                                                              'sym' => 'Waypoint',
+                                                              'lon' => '6.869330000',
+                                                              'cmt' => 'MILITARRINGSTRASSE'
+                                                            }
+                                                }, 'GPS::Babel::Point' )
+                                       ], 'GPS::Babel::Collection' ),
+                 'routes' => bless( [
+                                      bless( {
+                                               'item' => bless( [
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'desc' => 'MILITARRINGSTRASSE',
+                                                                                       'lat' => '50.968881000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0026',
+                                                                                       'lon' => '6.869330000',
+                                                                                       'cmt' => 'MILITARRINGSTRASSE'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968881000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0027',
+                                                                                       'lon' => '6.869330000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968881000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0028',
+                                                                                       'lon' => '6.869330000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968752000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0029',
+                                                                                       'lon' => '6.869287000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.947680000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0030',
+                                                                                       'lon' => '6.874523000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.938110000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0031',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937767000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0032',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937595000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0033',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937123000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0034',
+                                                                                       'lon' => '6.883407000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.936866000',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'name' => 'PT0035',
+                                                                                       'lon' => '6.883149000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( [
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937595000',
+                                                                                                'desc' => 'ACHNR1',
+                                                                                                'name' => 'PT0001',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883321000',
+                                                                                                'cmt' => 'ACHNR1'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937510000',
+                                                                                                'desc' => 'ACHNR2',
+                                                                                                'name' => 'PT0002',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.885123000',
+                                                                                                'cmt' => 'ACHNR2'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937595000',
+                                                                                                'desc' => 'ACHNRS',
+                                                                                                'name' => 'PT0003',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.882591000',
+                                                                                                'cmt' => 'ACHNRS'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => 1,
+                                                                                                'name' => 'Dummy',
+                                                                                                'lon' => 1
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => 1,
+                                                                                                'name' => 'Dummy',
+                                                                                                'lon' => 1
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.936308000',
+                                                                                                'desc' => 'L100',
+                                                                                                'name' => 'PT0006',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.924562000',
+                                                                                                'cmt' => 'L100'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.920901000',
+                                                                                                'desc' => 'L1001',
+                                                                                                'name' => 'PT0007',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.932673000',
+                                                                                                'cmt' => 'L1001'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.920901000',
+                                                                                                'desc' => 'LXMBR1',
+                                                                                                'name' => 'PT0008',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.933060000',
+                                                                                                'cmt' => 'LXMBR1'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.920901000',
+                                                                                                'desc' => 'LXMBR2',
+                                                                                                'name' => 'PT0009',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.933060000',
+                                                                                                'cmt' => 'LXMBR2'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.920773000',
+                                                                                                'desc' => 'LXMBRG',
+                                                                                                'name' => 'PT0010',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.932931000',
+                                                                                                'cmt' => 'LXMBRG'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937381000',
+                                                                                                'desc' => 'MLTR10',
+                                                                                                'name' => 'PT0011',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.882334000',
+                                                                                                'cmt' => 'MLTR10'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.968881000',
+                                                                                                'desc' => 'MLTRN1',
+                                                                                                'name' => 'PT0012',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.869330000',
+                                                                                                'cmt' => 'MLTRN1'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.968752000',
+                                                                                                'desc' => 'MLTRN2',
+                                                                                                'name' => 'PT0013',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.869287000',
+                                                                                                'cmt' => 'MLTRN2'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.947680000',
+                                                                                                'desc' => 'MLTRN3',
+                                                                                                'name' => 'PT0014',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.874523000',
+                                                                                                'cmt' => 'MLTRN3'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.938110000',
+                                                                                                'desc' => 'MLTRN4',
+                                                                                                'name' => 'PT0015',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883321000',
+                                                                                                'cmt' => 'MLTRN4'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937767000',
+                                                                                                'desc' => 'MLTRN5',
+                                                                                                'name' => 'PT0016',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883321000',
+                                                                                                'cmt' => 'MLTRN5'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937595000',
+                                                                                                'desc' => 'MLTRN6',
+                                                                                                'name' => 'PT0017',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883321000',
+                                                                                                'cmt' => 'MLTRN6'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.937123000',
+                                                                                                'desc' => 'MLTRN7',
+                                                                                                'name' => 'PT0018',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883407000',
+                                                                                                'cmt' => 'MLTRN7'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.936866000',
+                                                                                                'desc' => 'MLTRN8',
+                                                                                                'name' => 'PT0019',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.883149000',
+                                                                                                'cmt' => 'MLTRN8'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.936823000',
+                                                                                                'desc' => 'MLTRN9',
+                                                                                                'name' => 'PT0020',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.882849000',
+                                                                                                'cmt' => 'MLTRN9'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.968881000',
+                                                                                                'desc' => 'MILITARRINGSTRASSE',
+                                                                                                'name' => 'PT0021',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.869330000',
+                                                                                                'cmt' => 'MILITARRINGSTRASSE'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.936565000',
+                                                                                                'desc' => 'ROAD',
+                                                                                                'name' => 'PT0022',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.924133000',
+                                                                                                'cmt' => 'ROAD'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.930943000',
+                                                                                                'desc' => 'UNVRS1',
+                                                                                                'name' => 'PT0023',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.926408000',
+                                                                                                'cmt' => 'UNVRS1'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.929999000',
+                                                                                                'desc' => 'UNVRS2',
+                                                                                                'name' => 'PT0024',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.926966000',
+                                                                                                'cmt' => 'UNVRS2'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '50.933862000',
+                                                                                                'desc' => 'UNVRST',
+                                                                                                'name' => 'PT0025',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'lon' => '6.924648000',
+                                                                                                'cmt' => 'UNVRST'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '57.3',
+                                                                                                'lon' => '-2'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'lat' => '54.3562',
+                                                                                                'name' => 'where?',
+                                                                                                'lon' => '0.7837'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' ),
+                                                                           bless( {
+                                                                                    'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                                    'attr' => {
+                                                                                                'desc' => 'MILITARRINGSTRASSE',
+                                                                                                'lat' => '50.968881000',
+                                                                                                'sym' => 'Waypoint',
+                                                                                                'name' => 'PT0026',
+                                                                                                'lon' => '6.869330000',
+                                                                                                'cmt' => 'MILITARRINGSTRASSE'
+                                                                                              }
+                                                                                  }, 'GPS::Babel::Point' )
+                                                                         ], 'GPS::Babel::Collection' )
+                                                                ], 'GPS::Babel::Collection' ),
+                                               'attr' => {
+                                                           'name' => 'MLTRNG to HWYB26'
+                                                         }
+                                             }, 'GPS::Babel::Object' ),
+                                      bless( {
+                                               'item' => bless( [
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968881000',
+                                                                                       'desc' => 'MILITARRINGSTRASSE',
+                                                                                       'name' => 'PT0026',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.869330000',
+                                                                                       'cmt' => 'MILITARRINGSTRASSE'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968881000',
+                                                                                       'name' => 'PT0027',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.869330000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968881000',
+                                                                                       'name' => 'PT0028',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.869330000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.968752000',
+                                                                                       'name' => 'PT0029',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.869287000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.947680000',
+                                                                                       'name' => 'PT0030',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.874523000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.938110000',
+                                                                                       'name' => 'PT0031',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937767000',
+                                                                                       'name' => 'PT0032',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937595000',
+                                                                                       'name' => 'PT0033',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.883321000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.937123000',
+                                                                                       'name' => 'PT0034',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.883407000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' ),
+                                                                  bless( {
+                                                                           'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                                           'attr' => {
+                                                                                       'lat' => '50.936866000',
+                                                                                       'name' => 'PT0035',
+                                                                                       'sym' => 'Waypoint',
+                                                                                       'lon' => '6.883149000'
+                                                                                     }
+                                                                         }, 'GPS::Babel::Point' )
+                                                                ], 'GPS::Babel::Collection' ),
+                                               'attr' => {
+                                                           'name' => 'MLTRNG to HWYB26'
+                                                         }
+                                             }, 'GPS::Babel::Object' )
+                                    ], 'GPS::Babel::Collection' ),
+                 'tracks' => bless( [], 'GPS::Babel::Collection' ),
+                 'item' => bless( [], 'GPS::Babel::Collection' ),
+                 'attr' => {
+                             'time' => 1153396701,
+                             'bounds' => bless( {
+                                                  'item' => bless( [], 'GPS::Babel::Collection' ),
+                                                  'attr' => {
+                                                              'maxlat' => '50.968881000',
+                                                              'maxlon' => '6.933060000',
+                                                              'minlon' => '6.869287000',
+                                                              'minlat' => '50.920773000'
+                                                            }
+                                                }, 'GPS::Babel::Object' )
+                           }
+               }, 'GPS::Babel::Data' );
+new_for_array with:
+GPS::Babel::Point=HASH(0x18957a8)
+GPS::Babel::Point=HASH(0x5871f4)
+GPS::Babel::Point=HASH(0x587284)
+GPS::Babel::Point=HASH(0x189b7a8)
+GPS::Babel::Point=HASH(0x1896424)
+GPS::Babel::Point=HASH(0x1896ce4)
+GPS::Babel::Point=HASH(0x1896d74)
+GPS::Babel::Point=HASH(0x1894030)
+GPS::Babel::Point=HASH(0x1895574)
+GPS::Babel::Point=HASH(0x18956a0)
+GPS::Babel::Point=HASH(0x189cd2c)
+GPS::Babel::Point=HASH(0x1896e1c)
+GPS::Babel::Point=HASH(0x1896eac)
+GPS::Babel::Point=HASH(0x1896f3c)
+GPS::Babel::Point=HASH(0x1896fcc)
+GPS::Babel::Point=HASH(0x1897478)
+GPS::Babel::Point=HASH(0x1897508)
+GPS::Babel::Point=HASH(0x1897598)
+GPS::Babel::Point=HASH(0x1897628)
+GPS::Babel::Point=HASH(0x18976b8)
+GPS::Babel::Point=HASH(0x1897760)
+GPS::Babel::Point=HASH(0x1897c0c)
+GPS::Babel::Point=HASH(0x1897c9c)
+GPS::Babel::Point=HASH(0x1897d2c)
+GPS::Babel::Point=HASH(0x1897dbc)
+GPS::Babel::Point=HASH(0x189bca8)
+GPS::Babel::Point=HASH(0x189bd80)
+GPS::Babel::Point=HASH(0x189bd74)
+new_for_array with:
+GPS::Babel::Object=HASH(0x1897db0)
+GPS::Babel::Object=HASH(0x189bdbc)
+new_for_array with:
+
+All points
+PT0001, 50.937595000, 6.883321000 p=(no name), n=PT0002
+PT0002, 50.937510000, 6.885123000 p=PT0001, n=PT0003
+PT0003, 50.937595000, 6.882591000 p=PT0002, n=Dummy
+Dummy, 1, 1 p=PT0003, n=Dummy
+Dummy, 1, 1 p=Dummy, n=PT0006
+PT0006, 50.936308000, 6.924562000 p=Dummy, n=PT0007
+PT0007, 50.920901000, 6.932673000 p=PT0006, n=PT0008
+PT0008, 50.920901000, 6.933060000 p=PT0007, n=PT0009
+PT0009, 50.920901000, 6.933060000 p=PT0008, n=PT0010
+PT0010, 50.920773000, 6.932931000 p=PT0009, n=PT0011
+PT0011, 50.937381000, 6.882334000 p=PT0010, n=PT0012
+PT0012, 50.968881000, 6.869330000 p=PT0011, n=PT0013
+PT0013, 50.968752000, 6.869287000 p=PT0012, n=PT0014
+PT0014, 50.947680000, 6.874523000 p=PT0013, n=PT0015
+PT0015, 50.938110000, 6.883321000 p=PT0014, n=PT0016
+PT0016, 50.937767000, 6.883321000 p=PT0015, n=PT0017
+PT0017, 50.937595000, 6.883321000 p=PT0016, n=PT0018
+PT0018, 50.937123000, 6.883407000 p=PT0017, n=PT0019
+PT0019, 50.936866000, 6.883149000 p=PT0018, n=PT0020
+PT0020, 50.936823000, 6.882849000 p=PT0019, n=PT0021
+PT0021, 50.968881000, 6.869330000 p=PT0020, n=PT0022
+PT0022, 50.936565000, 6.924133000 p=PT0021, n=PT0023
+PT0023, 50.930943000, 6.926408000 p=PT0022, n=PT0024
+PT0024, 50.929999000, 6.926966000 p=PT0023, n=PT0025
+PT0025, 50.933862000, 6.924648000 p=PT0024, n=(no name)
+(no name), 57.3, -2 p=PT0025, n=where?
+where?, 54.3562, 0.7837 p=(no name), n=PT0026
+PT0026, 50.968881000, 6.869330000 p=where?, n=(no name)
+new_for_array with:
+GPS::Babel::Point=HASH(0x1897ef4)
+GPS::Babel::Point=HASH(0x1897fb4)
+GPS::Babel::Point=HASH(0x1898448)
+GPS::Babel::Point=HASH(0x18984c0)
+GPS::Babel::Point=HASH(0x1898538)
+GPS::Babel::Point=HASH(0x18985b0)
+GPS::Babel::Point=HASH(0x1898628)
+GPS::Babel::Point=HASH(0x18986a0)
+GPS::Babel::Point=HASH(0x1898718)
+GPS::Babel::Point=HASH(0x1898790)
+GPS::Babel::Collection=ARRAY(0x189bcfc)
+$VAR1 = bless( [
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'desc' => 'MILITARRINGSTRASSE',
+                                      'lat' => '50.968881000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0026',
+                                      'lon' => '6.869330000',
+                                      'cmt' => 'MILITARRINGSTRASSE'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.968881000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0027',
+                                      'lon' => '6.869330000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.968881000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0028',
+                                      'lon' => '6.869330000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.968752000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0029',
+                                      'lon' => '6.869287000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.947680000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0030',
+                                      'lon' => '6.874523000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.938110000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0031',
+                                      'lon' => '6.883321000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.937767000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0032',
+                                      'lon' => '6.883321000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.937595000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0033',
+                                      'lon' => '6.883321000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.937123000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0034',
+                                      'lon' => '6.883407000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( {
+                          'item' => bless( [], 'GPS::Babel::Collection' ),
+                          'attr' => {
+                                      'lat' => '50.936866000',
+                                      'sym' => 'Waypoint',
+                                      'name' => 'PT0035',
+                                      'lon' => '6.883149000'
+                                    }
+                        }, 'GPS::Babel::Point' ),
+                 bless( [
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937595000',
+                                               'desc' => 'ACHNR1',
+                                               'name' => 'PT0001',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883321000',
+                                               'cmt' => 'ACHNR1'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937510000',
+                                               'desc' => 'ACHNR2',
+                                               'name' => 'PT0002',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.885123000',
+                                               'cmt' => 'ACHNR2'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937595000',
+                                               'desc' => 'ACHNRS',
+                                               'name' => 'PT0003',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.882591000',
+                                               'cmt' => 'ACHNRS'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => 1,
+                                               'name' => 'Dummy',
+                                               'lon' => 1
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => 1,
+                                               'name' => 'Dummy',
+                                               'lon' => 1
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.936308000',
+                                               'desc' => 'L100',
+                                               'name' => 'PT0006',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.924562000',
+                                               'cmt' => 'L100'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.920901000',
+                                               'desc' => 'L1001',
+                                               'name' => 'PT0007',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.932673000',
+                                               'cmt' => 'L1001'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.920901000',
+                                               'desc' => 'LXMBR1',
+                                               'name' => 'PT0008',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.933060000',
+                                               'cmt' => 'LXMBR1'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.920901000',
+                                               'desc' => 'LXMBR2',
+                                               'name' => 'PT0009',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.933060000',
+                                               'cmt' => 'LXMBR2'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.920773000',
+                                               'desc' => 'LXMBRG',
+                                               'name' => 'PT0010',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.932931000',
+                                               'cmt' => 'LXMBRG'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937381000',
+                                               'desc' => 'MLTR10',
+                                               'name' => 'PT0011',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.882334000',
+                                               'cmt' => 'MLTR10'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.968881000',
+                                               'desc' => 'MLTRN1',
+                                               'name' => 'PT0012',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.869330000',
+                                               'cmt' => 'MLTRN1'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.968752000',
+                                               'desc' => 'MLTRN2',
+                                               'name' => 'PT0013',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.869287000',
+                                               'cmt' => 'MLTRN2'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.947680000',
+                                               'desc' => 'MLTRN3',
+                                               'name' => 'PT0014',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.874523000',
+                                               'cmt' => 'MLTRN3'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.938110000',
+                                               'desc' => 'MLTRN4',
+                                               'name' => 'PT0015',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883321000',
+                                               'cmt' => 'MLTRN4'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937767000',
+                                               'desc' => 'MLTRN5',
+                                               'name' => 'PT0016',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883321000',
+                                               'cmt' => 'MLTRN5'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937595000',
+                                               'desc' => 'MLTRN6',
+                                               'name' => 'PT0017',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883321000',
+                                               'cmt' => 'MLTRN6'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.937123000',
+                                               'desc' => 'MLTRN7',
+                                               'name' => 'PT0018',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883407000',
+                                               'cmt' => 'MLTRN7'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.936866000',
+                                               'desc' => 'MLTRN8',
+                                               'name' => 'PT0019',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.883149000',
+                                               'cmt' => 'MLTRN8'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.936823000',
+                                               'desc' => 'MLTRN9',
+                                               'name' => 'PT0020',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.882849000',
+                                               'cmt' => 'MLTRN9'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.968881000',
+                                               'desc' => 'MILITARRINGSTRASSE',
+                                               'name' => 'PT0021',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.869330000',
+                                               'cmt' => 'MILITARRINGSTRASSE'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.936565000',
+                                               'desc' => 'ROAD',
+                                               'name' => 'PT0022',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.924133000',
+                                               'cmt' => 'ROAD'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.930943000',
+                                               'desc' => 'UNVRS1',
+                                               'name' => 'PT0023',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.926408000',
+                                               'cmt' => 'UNVRS1'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.929999000',
+                                               'desc' => 'UNVRS2',
+                                               'name' => 'PT0024',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.926966000',
+                                               'cmt' => 'UNVRS2'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '50.933862000',
+                                               'desc' => 'UNVRST',
+                                               'name' => 'PT0025',
+                                               'sym' => 'Waypoint',
+                                               'lon' => '6.924648000',
+                                               'cmt' => 'UNVRST'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '57.3',
+                                               'lon' => '-2'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'lat' => '54.3562',
+                                               'name' => 'where?',
+                                               'lon' => '0.7837'
+                                             }
+                                 }, 'GPS::Babel::Point' ),
+                          bless( {
+                                   'item' => bless( [], 'GPS::Babel::Collection' ),
+                                   'attr' => {
+                                               'desc' => 'MILITARRINGSTRASSE',
+                                               'lat' => '50.968881000',
+                                               'sym' => 'Waypoint',
+                                               'name' => 'PT0026',
+                                               'lon' => '6.869330000',
+                                               'cmt' => 'MILITARRINGSTRASSE'
+                                             }
+                                 }, 'GPS::Babel::Point' )
+                        ], 'GPS::Babel::Collection' )
+               ], 'GPS::Babel::Collection' );

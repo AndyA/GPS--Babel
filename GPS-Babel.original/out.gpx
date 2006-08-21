@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx
+ version="1.0"
+creator="GPSBabel - http://www.gpsbabel.org"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.topografix.com/GPX/1/0"
+xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<time>2006-07-25T19:18:55Z</time>
+<bounds minlat="1.000000000" minlon ="-2.000000000" maxlat="57.300000000" maxlon="6.933060000" />
+<wpt lat="50.937595000" lon="6.883321000">
+  <name>PT0001</name>
+  <cmt>ACHNR1</cmt>
+  <desc>ACHNR1</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937510000" lon="6.885123000">
+  <name>PT0002</name>
+  <cmt>ACHNR2</cmt>
+  <desc>ACHNR2</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937595000" lon="6.882591000">
+  <name>PT0003</name>
+  <cmt>ACHNRS</cmt>
+  <desc>ACHNRS</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="1.000000000" lon="1.000000000">
+  <name>Dummy</name>
+  <cmt>Dummy</cmt>
+  <desc>Dummy</desc>
+</wpt>
+<wpt lat="1.000000000" lon="1.000000000">
+  <name>Dummy</name>
+  <cmt>Dummy</cmt>
+  <desc>Dummy</desc>
+</wpt>
+<wpt lat="50.936308000" lon="6.924562000">
+  <name>PT0006</name>
+  <cmt>L100</cmt>
+  <desc>L100</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.920901000" lon="6.932673000">
+  <name>PT0007</name>
+  <cmt>L1001</cmt>
+  <desc>L1001</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.920901000" lon="6.933060000">
+  <name>PT0008</name>
+  <cmt>LXMBR1</cmt>
+  <desc>LXMBR1</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.920901000" lon="6.933060000">
+  <name>PT0009</name>
+  <cmt>LXMBR2</cmt>
+  <desc>LXMBR2</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.920773000" lon="6.932931000">
+  <name>PT0010</name>
+  <cmt>LXMBRG</cmt>
+  <desc>LXMBRG</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937381000" lon="6.882334000">
+  <name>PT0011</name>
+  <cmt>MLTR10</cmt>
+  <desc>MLTR10</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.968881000" lon="6.869330000">
+  <name>PT0012</name>
+  <cmt>MLTRN1</cmt>
+  <desc>MLTRN1</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.968752000" lon="6.869287000">
+  <name>PT0013</name>
+  <cmt>MLTRN2</cmt>
+  <desc>MLTRN2</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.947680000" lon="6.874523000">
+  <name>PT0014</name>
+  <cmt>MLTRN3</cmt>
+  <desc>MLTRN3</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.938110000" lon="6.883321000">
+  <name>PT0015</name>
+  <cmt>MLTRN4</cmt>
+  <desc>MLTRN4</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937767000" lon="6.883321000">
+  <name>PT0016</name>
+  <cmt>MLTRN5</cmt>
+  <desc>MLTRN5</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937595000" lon="6.883321000">
+  <name>PT0017</name>
+  <cmt>MLTRN6</cmt>
+  <desc>MLTRN6</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.937123000" lon="6.883407000">
+  <name>PT0018</name>
+  <cmt>MLTRN7</cmt>
+  <desc>MLTRN7</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.936866000" lon="6.883149000">
+  <name>PT0019</name>
+  <cmt>MLTRN8</cmt>
+  <desc>MLTRN8</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.936823000" lon="6.882849000">
+  <name>PT0020</name>
+  <cmt>MLTRN9</cmt>
+  <desc>MLTRN9</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.968881000" lon="6.869330000">
+  <name>PT0021</name>
+  <cmt>MILITARRINGSTRASSE</cmt>
+  <desc>MILITARRINGSTRASSE</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.936565000" lon="6.924133000">
+  <name>PT0022</name>
+  <cmt>ROAD</cmt>
+  <desc>ROAD</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.930943000" lon="6.926408000">
+  <name>PT0023</name>
+  <cmt>UNVRS1</cmt>
+  <desc>UNVRS1</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.929999000" lon="6.926966000">
+  <name>PT0024</name>
+  <cmt>UNVRS2</cmt>
+  <desc>UNVRS2</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="50.933862000" lon="6.924648000">
+  <name>PT0025</name>
+  <cmt>UNVRST</cmt>
+  <desc>UNVRST</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<wpt lat="57.300000000" lon="-2.000000000">
+  <name>WPT026</name>
+  <cmt>WPT026</cmt>
+  <desc>WPT026</desc>
+</wpt>
+<wpt lat="54.356200000" lon="0.783700000">
+  <name>where?</name>
+  <cmt>where?</cmt>
+  <desc>where?</desc>
+</wpt>
+<wpt lat="50.968881000" lon="6.869330000">
+  <name>PT0026</name>
+  <cmt>MILITARRINGSTRASSE</cmt>
+  <desc>MILITARRINGSTRASSE</desc>
+  <sym>Waypoint</sym>
+</wpt>
+<rte>
+  <name>MLTRNG to HWYB26</name>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0026</name>
+    <cmt>MILITARRINGSTRASSE</cmt>
+    <desc>MILITARRINGSTRASSE</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0027</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0028</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968752000" lon="6.869287000">
+    <name>PT0029</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.947680000" lon="6.874523000">
+    <name>PT0030</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.938110000" lon="6.883321000">
+    <name>PT0031</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937767000" lon="6.883321000">
+    <name>PT0032</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937595000" lon="6.883321000">
+    <name>PT0033</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937123000" lon="6.883407000">
+    <name>PT0034</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.936866000" lon="6.883149000">
+    <name>PT0035</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937595000" lon="6.883321000">
+    <name>PT0001</name>
+    <cmt>ACHNR1</cmt>
+    <desc>ACHNR1</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937510000" lon="6.885123000">
+    <name>PT0002</name>
+    <cmt>ACHNR2</cmt>
+    <desc>ACHNR2</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937595000" lon="6.882591000">
+    <name>PT0003</name>
+    <cmt>ACHNRS</cmt>
+    <desc>ACHNRS</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="1.000000000" lon="1.000000000">
+    <name>Dummy</name>
+  </rtept>
+  <rtept lat="1.000000000" lon="1.000000000">
+    <name>Dummy</name>
+  </rtept>
+  <rtept lat="50.936308000" lon="6.924562000">
+    <name>PT0006</name>
+    <cmt>L100</cmt>
+    <desc>L100</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.920901000" lon="6.932673000">
+    <name>PT0007</name>
+    <cmt>L1001</cmt>
+    <desc>L1001</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.920901000" lon="6.933060000">
+    <name>PT0008</name>
+    <cmt>LXMBR1</cmt>
+    <desc>LXMBR1</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.920901000" lon="6.933060000">
+    <name>PT0009</name>
+    <cmt>LXMBR2</cmt>
+    <desc>LXMBR2</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.920773000" lon="6.932931000">
+    <name>PT0010</name>
+    <cmt>LXMBRG</cmt>
+    <desc>LXMBRG</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937381000" lon="6.882334000">
+    <name>PT0011</name>
+    <cmt>MLTR10</cmt>
+    <desc>MLTR10</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0012</name>
+    <cmt>MLTRN1</cmt>
+    <desc>MLTRN1</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968752000" lon="6.869287000">
+    <name>PT0013</name>
+    <cmt>MLTRN2</cmt>
+    <desc>MLTRN2</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.947680000" lon="6.874523000">
+    <name>PT0014</name>
+    <cmt>MLTRN3</cmt>
+    <desc>MLTRN3</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.938110000" lon="6.883321000">
+    <name>PT0015</name>
+    <cmt>MLTRN4</cmt>
+    <desc>MLTRN4</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937767000" lon="6.883321000">
+    <name>PT0016</name>
+    <cmt>MLTRN5</cmt>
+    <desc>MLTRN5</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937595000" lon="6.883321000">
+    <name>PT0017</name>
+    <cmt>MLTRN6</cmt>
+    <desc>MLTRN6</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937123000" lon="6.883407000">
+    <name>PT0018</name>
+    <cmt>MLTRN7</cmt>
+    <desc>MLTRN7</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.936866000" lon="6.883149000">
+    <name>PT0019</name>
+    <cmt>MLTRN8</cmt>
+    <desc>MLTRN8</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.936823000" lon="6.882849000">
+    <name>PT0020</name>
+    <cmt>MLTRN9</cmt>
+    <desc>MLTRN9</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0021</name>
+    <cmt>MILITARRINGSTRASSE</cmt>
+    <desc>MILITARRINGSTRASSE</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.936565000" lon="6.924133000">
+    <name>PT0022</name>
+    <cmt>ROAD</cmt>
+    <desc>ROAD</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.930943000" lon="6.926408000">
+    <name>PT0023</name>
+    <cmt>UNVRS1</cmt>
+    <desc>UNVRS1</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.929999000" lon="6.926966000">
+    <name>PT0024</name>
+    <cmt>UNVRS2</cmt>
+    <desc>UNVRS2</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.933862000" lon="6.924648000">
+    <name>PT0025</name>
+    <cmt>UNVRST</cmt>
+    <desc>UNVRST</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="57.300000000" lon="-2.000000000">
+    <name>RPT036</name>
+  </rtept>
+  <rtept lat="54.356200000" lon="0.783700000">
+    <name>where?</name>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0026</name>
+    <cmt>MILITARRINGSTRASSE</cmt>
+    <desc>MILITARRINGSTRASSE</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+</rte>
+<rte>
+  <name>MLTRNG to HWYB26</name>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0026</name>
+    <cmt>MILITARRINGSTRASSE</cmt>
+    <desc>MILITARRINGSTRASSE</desc>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0027</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968881000" lon="6.869330000">
+    <name>PT0028</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.968752000" lon="6.869287000">
+    <name>PT0029</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.947680000" lon="6.874523000">
+    <name>PT0030</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.938110000" lon="6.883321000">
+    <name>PT0031</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937767000" lon="6.883321000">
+    <name>PT0032</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937595000" lon="6.883321000">
+    <name>PT0033</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.937123000" lon="6.883407000">
+    <name>PT0034</name>
+    <sym>Waypoint</sym>
+  </rtept>
+  <rtept lat="50.936866000" lon="6.883149000">
+    <name>PT0035</name>
+    <sym>Waypoint</sym>
+  </rtept>
+</rte>
+</gpx>

@@ -1,0 +1,20 @@
+Build.PL
+Changes
+MANIFEST
+META.yml # Will be created by "make dist"
+Makefile.PL
+README
+lib/GPS/Babel/Collection.pm
+lib/GPS/Babel/Data.pm
+lib/GPS/Babel/Index/ByTime.pm
+lib/GPS/Babel/Iterator.pm
+lib/GPS/Babel/Node.pm
+lib/GPS/Babel/Object.pm
+lib/GPS/Babel/Point.pm
+lib/GPS/Babel/Util.pm
+lib/GPS/Babel.pm
+t.pl
+t/00.load.t
+t/perlcritic.t
+t/pod-coverage.t
+t/pod.t

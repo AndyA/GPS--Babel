@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx
+ version="1.0"
+creator="GPSBabel - http://www.gpsbabel.org"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://www.topografix.com/GPX/1/0"
+xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+<time>2006-07-25T19:18:56Z</time>
+<bounds minlat="51.723300000" minlon ="-2.015600000" maxlat="54.787300000" maxlon="-1.233700000" />
+<wpt lat="54.787300000" lon="-1.634700000">
+  <name>Point 1</name>
+  <cmt>Point 1</cmt>
+  <desc>Point 1</desc>
+</wpt>
+<wpt lat="53.881200000" lon="-1.233700000">
+  <name>Point 2</name>
+  <cmt>Point 2</cmt>
+  <desc>Point 2</desc>
+</wpt>
+<wpt lat="51.723300000" lon="-1.987300000">
+  <name>Route Point 1</name>
+  <cmt>Route Point 1</cmt>
+  <desc>Route Point 1</desc>
+</wpt>
+<wpt lat="52.722100000" lon="-2.015600000">
+  <name>Route Point 2</name>
+  <cmt>Route Point 2</cmt>
+  <desc>Route Point 2</desc>
+</wpt>
+<rte>
+  <name>My Route</name>
+  <rtept lat="51.723300000" lon="-1.987300000">
+    <name>Route Point 1</name>
+  </rtept>
+  <rtept lat="52.722100000" lon="-2.015600000">
+    <name>Route Point 2</name>
+  </rtept>
+</rte>
+</gpx>
