@@ -3,41 +3,316 @@ package GPS::Babel;
 use warnings;
 use strict;
 use Carp;
+use Geo::Gpx;
+use File::Which qw(which);
+use IO::Handle;
+use Class::Std;
+use Data::Dumper;
 
-use version; $VERSION = qv('0.0.3');
+use version; our $VERSION = qv('0.0.1');
 
-# Other recommended modules (uncomment to use):
-#  use IO::Prompt;
-#  use Perl6::Export;
-#  use Perl6::Slurp;
-#  use Perl6::Say;
+my $EXENAME = 'gpsbabel';
+
+my %exepath :ATTR( :set<exename>, :get<exename> );
+my %info    :ATTR;
+
+sub BUILD {
+    my ($self, $id, $args) = @_;
+
+    $exepath{$id} = $args->{exename} || which($EXENAME);
+    $info{$id}    = undef;
+}
+
+sub check_exe {
+    my $self = shift;
+    my $id   = ident($self);
+
+    croak "$EXENAME not found"
+        unless defined($exepath{$id});
+}
+
+sub _with_babel {
+    my $self = shift;
+    my $id   = ident($self);
+    my ($mode, $opts, $cb) = @_;
+
+    $self->check_exe();
+    open(my $fh, $mode, $exepath{$id}, @{$opts}) or die "Can't execute $exepath{$id} ($!)\n";
+    $cb->($fh);
+    $fh->close() or die "$exepath{$id} failed ($?)\n";
+}
+
+sub _with_babel_reader {
+    my $self = shift;
+    my ($opts, $cb) = @_;
+    
+    $self->_with_babel('-|', $opts, $cb);
+}
+
+sub _tidy {
+    my $str = shift;
+    $str =~ s/^\s+//;
+    $str =~ s/\s+$//;
+    $str =~ s/\s+/ /g;
+    return $str;
+}
+
+sub _find_info {
+    my $self = shift;
+    my $id   = ident($self);
+    
+    my $info = {
+        formats => { },
+        filters => { },
+        for_ext => { }
+    };
+
+    # Read the version
+    $self->_with_babel_reader(['-V'], sub {
+        my $fh = shift;
+        local $/; 
+        $info->{banner} = _tidy(<$fh>);
+    });
+
+    if ($info->{banner} =~ /([\d.]+)/) {
+        $info->{version} = $1;
+    }
+    
+    # -^3 and -%1 are 1.2.8 and later
+    if (_cmp_ver($info->{version}, '1.2.8') >= 0) {
+        # File formats
+        $self->_with_babel_reader(['-^3'], sub {
+            my $fh = shift;
+            while (my $ln = <$fh>) {
+                chomp($ln);
+                my ($type, @f) = split(/\t/, $ln);
+                if ($type eq 'file') {
+                    my ($modes, $name, $ext, $desc, $parent) = @f;
+                    $info->{formats}->{$name} = {
+                        modes   => $modes,
+                        desc    => $desc,
+                        parent  => $parent
+                    };
+                    if ($ext) {
+                        $ext =~ s/^[.]//;   # At least one format has a stray '.'
+                        $ext = lc($ext);
+                        $info->{formats}->{$name}->{ext} = $ext;
+                        push @{$info->{for_ext}->{$ext}}, $name;
+                    }
+                } elsif ($type eq 'option') {
+                    my ($fname, $name, $desc, $type, $default, $min, $max) = @f;
+                    $info->{formats}->{$fname}->{options}->{$name} = {
+                        desc    => $desc,
+                        type    => $type,
+                        default => $default || '',
+                        min     => $min     || '',
+                        max     => $max     || ''
+                    };
+                } else {
+                    # Something we don't know about - so ignore it
+                }
+            }
+        });
+    
+        # Filters
+        $self->_with_babel_reader(['-%1'], sub {
+            my $fh = shift;
+            while (my $ln = <$fh>) {
+                chomp($ln);
+                my ($name, @f) = split(/\t/, $ln);
+                if ($name eq 'option') {
+                    my ($fname, $oname, $desc, $type, @valid) = @f;
+                    $info->{filters}->{$fname}->{options}->{$oname} = {
+                        desc    => $desc,
+                        type    => $type,
+                        # Not exactly sure what this is
+                        valid   => [ @valid ]
+                    };
+                } else {
+                    $info->{filters}->{$name} = {
+                        desc    => $f[0]
+                    };
+                }
+            }
+        });
+    }
+    
+    return $info;
+}
+
+sub get_info {
+    my $self = shift;
+    my $id   = ident($self);
+    
+    return $info{$id} ||= $self->_find_info();
+}
+
+sub banner {
+    my $self = shift;
+    return $self->get_info()->{banner};
+}
+
+sub version {
+    my $self = shift;
+    return $self->get_info()->{version};
+}
+
+sub _cmp_ver {
+    my ($v1, $v2) = @_;
+    my @v1 = split(/[.]/, $v1);
+    my @v2 = split(/[.]/, $v2);
+    
+    while (@v1 && @v2) {
+        my $cmp = (shift @v1 <=> shift @v2);
+        return $cmp if $cmp;
+    }
+    
+    return @v1 <=> @v2;
+}
+
+sub got_ver {
+    my $self = shift;
+    my $need = shift;
+    my $got  = $self->version();
+    return _cmp_ver($got, $need) >= 0;
+}
+
+sub guess_format {
+    my $self = shift;
+    my $id   = ident($self);
+    my $name = shift;
+    my $dfmt = shift;
+
+    croak("Missing filename")
+        unless defined($name);
+
+    my $info = $self->get_info();
+
+    # Format specified
+    if (defined($dfmt)) {
+        croak("Unknown format \"$dfmt\"")
+            if exists($info->{formats}) && 
+               !exists($info->{formats}->{$dfmt});
+        return $dfmt;
+    }
+
+    croak("Filename \"$name\" has no extension")
+        unless $name =~ /[.]([^.]+)$/;
+        
+    my $ext  = lc($1);
+    my $fmt  = $info->{for_ext}->{$ext};
+    
+    croak("No format handles extension .$ext")
+        unless defined($fmt);
+
+    my @fmt  = sort @{$fmt};
+
+    return $fmt[0] if @fmt == 1;
+
+    my $last = pop @fmt;
+    my $list = join(' and ', join(', ', @fmt), $last);
+
+    croak("Multiple formats ($list) handle extension .$ext");
+}
+
+sub convert {
+    my $self   = shift;
+    my $id     = ident($self);
+    my $inf    = shift;
+    my $outf   = shift;
+    my $opts   = shift || { };
+    
+    my $infmt  = $self->guess_format($inf,  $opts->{in_format});
+    my $outfmt = $self->guess_format($outf, $opts->{out_format});
+    
+    my @proc = ( );
+    push @proc, '-w' if $opts->{waypoints} || $opts->{all};
+    push @proc, '-t' if $opts->{tracks}    || $opts->{all};
+    push @proc, '-r' if $opts->{routes}    || $opts->{all};
+    
+    my @opts = (
+        '-p', '',
+        @proc,
+        '-i', $infmt,  '-f', $inf,
+        '-o', $outfmt, '-F', $outf
+    );
+    
+    $self->direct(@opts);
+}
+
+sub direct {
+    my $self   = shift;
+    my $id     = ident($self);
+    
+    $self->check_exe();
+    warn(join(' ', $exepath{$id}, @_) . "\n");
+    if (system($exepath{$id}, @_)) {
+        croak("$EXENAME failed with error " . (($? == -1) ? $! : $?));
+    }
+}
+
+# sub read {
+#     my $self = shift;
+#     my %opts = @_;
+#     my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
+#     my $name = $opts{name} || croak "Must supply the name of a file to read";
+#     my @args = ($self->{exe}, '-p', '',
+#                 qw(-r -w -t -i),
+#                 $opts{fmt}, '-f', $name,
+#                 qw(-o gpx -F -));
+#     #print join(' ', @args), "\n";
+#     my $fh = IO::Pipe->new();
+#     $fh->reader(@args);
+#     croak "gpsbabel failed ($!)"
+#         if $fh->eof;
+#     my $data = GPS::Babel::Data->new();
+#     $data->_read_from_gpx($fh);
+#     $fh->close();
+#     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+#     return $data;
+# }
+# 
+# 
+# sub write {
+#     my $self = shift;
+#     my $data = shift;
+#     my %opts = @_;
+#     my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
+#     my $name = $opts{name} || croak "Must supply the name of a file to write";
+#     my @args = ($self->{exe}, '-p', '',
+#                 qw(-r -w -t -i gpx -f - -o),
+#                 $fmt, '-F', $name);
+#     #print join(' ', @args), "\n";
+#     my $fh = IO::Pipe->new();
+#     $fh->writer(@args);
+#     $data->_write_as_gpx($fh);
+#     $fh->close() or croak "Write error ($!)";
+#     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
+# }
 
 
-# Module implementation here
-
-
-1; # Magic true value required at end of module
+1;
 __END__
 
 =head1 NAME
 
-GPS::Babel - [One line description of module's purpose here]
-
+GPS::Babel - Perl interface to gpsbabel
 
 =head1 VERSION
 
 This document describes GPS::Babel version 0.0.1
 
-
 =head1 SYNOPSIS
 
     use GPS::Babel;
+
+    my $babel = GPS::Babel->new();
+    my $data  = $babel->read('route.ozi', 'ozi');
 
 =for author to fill in:
     Brief code example(s) here showing commonest usage(s).
     This section will be as far as many users bother reading
     so make it as educational and exeplary as possible.
-  
   
 =head1 DESCRIPTION
 
@@ -45,15 +320,37 @@ This document describes GPS::Babel version 0.0.1
     Write a full description of the module and its features here.
     Use subsections (=head2, =head3) as appropriate.
 
-
 =head1 INTERFACE 
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=over
 
+=item C<new( { options } )>
+
+=item C<check_exe()>
+
+=item C<get_info()>
+
+=item C<banner()>
+
+=item C<version()>
+
+=item C<got_ver( $ver )>
+
+=item C<guess_format( $filename )>
+
+=item C<get_exename()>
+
+=item C<set_exename( $path )>
+
+=item C<read( $filename [, $format [, { $options } ] ] )>
+
+=item C<write( $filename [, $format [, { $options } ] ] )>
+
+=item C<convert( $infile, $outfile, [, { $options } ] )>
+
+=item C<direct( @options )>
+
+=back
 
 =head1 DIAGNOSTICS
 
@@ -77,7 +374,6 @@ This document describes GPS::Babel version 0.0.1
 
 =back
 
-
 =head1 CONFIGURATION AND ENVIRONMENT
 
 =for author to fill in:
@@ -89,7 +385,6 @@ This document describes GPS::Babel version 0.0.1
   
 GPS::Babel requires no configuration files or environment variables.
 
-
 =head1 DEPENDENCIES
 
 =for author to fill in:
@@ -99,7 +394,6 @@ GPS::Babel requires no configuration files or environment variables.
     module's distribution, or must be installed separately. ]
 
 None.
-
 
 =head1 INCOMPATIBILITIES
 
@@ -111,7 +405,6 @@ None.
     filters are mutually incompatible).
 
 None reported.
-
 
 =head1 BUGS AND LIMITATIONS
 
@@ -130,11 +423,9 @@ Please report any bugs or feature requests to
 C<bug-gps-babel@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org>.
 
-
 =head1 AUTHOR
 
 Andy Armstrong  C<< <andy@hexten.net> >>
-
 
 =head1 LICENCE AND COPYRIGHT
 
@@ -142,7 +433,6 @@ Copyright (c) 2006, Andy Armstrong C<< <andy@hexten.net> >>. All rights reserved
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
-
 
 =head1 DISCLAIMER OF WARRANTY
 
