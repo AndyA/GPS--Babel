@@ -7,7 +7,6 @@ use Geo::Gpx;
 use File::Which qw(which);
 use IO::Handle;
 use Class::Std;
-use Data::Dumper;
 
 use version; our $VERSION = qv('0.0.1');
 
@@ -37,6 +36,7 @@ sub _with_babel {
     my ($mode, $opts, $cb) = @_;
 
     $self->check_exe();
+    warn(join(' ', $exepath{$id}, @{$opts}) . "\n");
     open(my $fh, $mode, $exepath{$id}, @{$opts}) or die "Can't execute $exepath{$id} ($!)\n";
     $cb->($fh);
     $fh->close() or die "$exepath{$id} failed ($?)\n";
@@ -47,6 +47,13 @@ sub _with_babel_reader {
     my ($opts, $cb) = @_;
     
     $self->_with_babel('-|', $opts, $cb);
+}
+
+sub _with_babel_writer {
+    my $self = shift;
+    my ($opts, $cb) = @_;
+    
+    $self->_with_babel('|-', $opts, $cb);
 }
 
 sub _tidy {
@@ -88,8 +95,11 @@ sub _find_info {
                 my ($type, @f) = split(/\t/, $ln);
                 if ($type eq 'file') {
                     my ($modes, $name, $ext, $desc, $parent) = @f;
+                    (my $nmodes = $modes) =~ tr/rw-/110/;
+                    $nmodes = oct('0b' . $nmodes);
                     $info->{formats}->{$name} = {
                         modes   => $modes,
+                        nmodes  => $nmodes,
                         desc    => $desc,
                         parent  => $parent
                     };
@@ -215,20 +225,35 @@ sub guess_format {
     croak("Multiple formats ($list) handle extension .$ext");
 }
 
-sub convert {
+sub _convert_opts {
     my $self   = shift;
     my $id     = ident($self);
     my $inf    = shift;
     my $outf   = shift;
     my $opts   = shift || { };
+
+    croak "Must provide input and output filenames"
+        unless defined($outf);
     
     my $infmt  = $self->guess_format($inf,  $opts->{in_format});
     my $outfmt = $self->guess_format($outf, $opts->{out_format});
+
+    my $info   = $self->get_info();
+
+    my $inmd   = $info->{formats}->{$infmt}->{nmodes};
+    my $outmd  = $info->{formats}->{$outfmt}->{nmodes};
     
+    # Work out which modes can be read by the input format /and/ written by
+    # the output format.
+    my $canmd  = ($inmd >> 1) & $outmd;
+
     my @proc = ( );
-    push @proc, '-w' if $opts->{waypoints} || $opts->{all};
-    push @proc, '-t' if $opts->{tracks}    || $opts->{all};
-    push @proc, '-r' if $opts->{routes}    || $opts->{all};
+    push @proc, '-r' if ($canmd & 0x01);
+    push @proc, '-t' if ($canmd & 0x04);
+    push @proc, '-w' if ($canmd & 0x10);
+    
+    croak "Formats $infmt and $outfmt have no read/write capabilities in common"
+        unless @proc;
     
     my @opts = (
         '-p', '',
@@ -236,6 +261,15 @@ sub convert {
         '-i', $infmt,  '-f', $inf,
         '-o', $outfmt, '-F', $outf
     );
+
+    return @opts;
+}
+
+sub convert {
+    my $self   = shift;
+    my $id     = ident($self);
+
+    my @opts   = $self->_convert_opts(@_);
     
     $self->direct(@opts);
 }
@@ -251,45 +285,50 @@ sub direct {
     }
 }
 
-# sub read {
-#     my $self = shift;
-#     my %opts = @_;
-#     my $fmt  = $opts{fmt}  || croak "Must supply the format to read";
-#     my $name = $opts{name} || croak "Must supply the name of a file to read";
-#     my @args = ($self->{exe}, '-p', '',
-#                 qw(-r -w -t -i),
-#                 $opts{fmt}, '-f', $name,
-#                 qw(-o gpx -F -));
-#     #print join(' ', @args), "\n";
-#     my $fh = IO::Pipe->new();
-#     $fh->reader(@args);
-#     croak "gpsbabel failed ($!)"
-#         if $fh->eof;
-#     my $data = GPS::Babel::Data->new();
-#     $data->_read_from_gpx($fh);
-#     $fh->close();
-#     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
-#     return $data;
-# }
-# 
-# 
-# sub write {
-#     my $self = shift;
-#     my $data = shift;
-#     my %opts = @_;
-#     my $fmt  = $opts{fmt}  || croak "Must supply the format to write";
-#     my $name = $opts{name} || croak "Must supply the name of a file to write";
-#     my @args = ($self->{exe}, '-p', '',
-#                 qw(-r -w -t -i gpx -f - -o),
-#                 $fmt, '-F', $name);
-#     #print join(' ', @args), "\n";
-#     my $fh = IO::Pipe->new();
-#     $fh->writer(@args);
-#     $data->_write_as_gpx($fh);
-#     $fh->close() or croak "Write error ($!)";
-#     croak "gpsbabel failed (" . ($?>>8) . ")" if $?;
-# }
+sub read {
+    my $self = shift;
+    my $id   = ident($self);
+    my $inf  = shift;
+    my $opts = shift || { };
 
+    require Geo::Gpx;
+
+    croak "Must provide an input filename"
+        unless defined($inf);
+
+    $opts->{out_format} = 'gpx';
+    
+    my @opts = $self->_convert_opts($inf, '-', $opts);
+    my $gpx = undef;
+
+    $self->_with_babel_reader(\@opts, sub {
+        my $fh = shift;
+        $gpx = Geo::Gpx->new(input => $fh);
+    });
+    
+    return $gpx;
+}
+
+sub write {
+    my $self = shift;
+    my $id   = ident($self);
+    my $outf = shift;
+    my $gpx  = shift;
+    my $opts = shift || { };
+
+    croak "Must provide some data to output"
+        unless ref($gpx) && $gpx->can('xml');
+        
+    $opts->{in_format} = 'gpx';
+
+    my $xml = $gpx->xml();
+    
+    my @opts = $self->_convert_opts('-', $outf, $opts);
+    $self->_with_babel_writer(\@opts, sub {
+        my $fh = shift;
+        $fh->print($xml);
+    });
+}
 
 1;
 __END__
@@ -307,18 +346,78 @@ This document describes GPS::Babel version 0.0.1
     use GPS::Babel;
 
     my $babel = GPS::Babel->new();
+    
+    # Read an OZIExplorer file into a data structure
     my $data  = $babel->read('route.ozi', 'ozi');
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
+    # Convert a file automatically choosing input and output
+    # format based on extension
+    $babel->convert('points.wpt', 'points.gpx', { all => 1 });
+    
+    # Call gpsbabel directly
+    $babel->direct(qw(gpsbabel -i saroute,split 
+        -f in.anr -f in2.anr -o an1,type=road -F out.an1));
+
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+From L<http://gpsbabel.org/>:
+
+    GPSBabel converts waypoints, tracks, and routes from one format to
+    another, whether that format is a common mapping format like
+    Delorme, Streets and Trips, or even a serial upload or download to a
+    GPS unit such as those from Garmin and Magellan. By flattening the
+    Tower of Babel that the authors of various programs for manipulating
+    GPS data have imposed upon us, it returns to us the ability to
+    freely move our own waypoint data between the programs and hardware
+    we choose to use.
+
+As I write this C<gpsbabel> supports 96 various GPS related data
+formats. In addition to file conversion it supports upload and
+download to a number of serial and USB devices. This module provides a
+(thin) wrapper around the gpsbabel binary making it easier to use in a
+perlish way.
+
+GPSBabel supports many options including arbitrary chains of filters,
+merging data from multiple files and many format specific parameters.
+This module doesn't attempt to provide an API wrapper around all these
+options. It does however provide for simple access to the most common
+operations. For more complex cases a passthrough method (C<direct>)
+passes its arguments directly to gpsbabel with minimal preprocessing.
+
+GPSBabel is able to describe its built in filters and formats and
+enumerate the options they accept. This information is available as a
+perl data structure which may be used to construct a dynamic user
+interface that reflects the options available from the gpsbabel binary.
+
+=head2 Format Guessing 
+
+C<GPS::Babel> queries the capabilities of C<gpsbabel> and can use this
+information to automatically choose input and output formats based on
+the extensions of filenames. This makes it possible to, for example,
+create tools that bulk convert a batch of files choosing the correct
+format for each one.
+
+While this can be convenient there is an important caveat: if more than
+one format is associated with a particular extension GPS::Babel will
+fail rather than risking making the wrong guess. Because new formats are
+being added to gpsbabel all the time it's possible that a format that
+can be guessed today will become ambiguous tomorrow. That raises the
+spectre of a program that works now breaking in the future.
+
+Also some formats support a particular extension without explicitly
+saying so - for example the compegps format supports .wpt files but
+gpsbabel (currently) reports that the only format explicitly associated
+with the .wpt extension is xmap. This means that C<GPS::Babel> will
+confidently guess that the format for a file called something.wpt is
+xmap even if the file contains compegps data.
+
+In general then you should only use format guessing in applications
+where the user will have the opportunity to select a format explicitly
+if an unambiguous guess can't be made. For applications that must run
+unattended or where the user doesn't have this kind of control you
+should make the choice of filter explicit by passing C<in_format> and/or
+C<out_format> options to C<read>, C<write> and C<convert> as
+appropriate.
 
 =head1 INTERFACE 
 
@@ -328,27 +427,113 @@ This document describes GPS::Babel version 0.0.1
 
 =item C<check_exe()>
 
+Verify that the name of the gpsbabel executable is known throwing an
+error if it isn't. This is generally called by other methods but you may
+call it yourself to cause an error to be thrown early in your program if
+gpsbabel is not available.
+
 =item C<get_info()>
+
+Returns a reference to a hash that describes the capabilities of your
+gpsbabel binary. The format of this hash is probably best explored by
+running the following script and perusing its output:
+
+    #!/usr/bin/perl -w
+
+    use strict;
+    use GPS::Babel;
+    use Data::Dumper;
+
+    $| = 1;
+
+    my $babel = GPS::Babel->new();
+    print Dumper($babel->get_info());
+
+This script is provided in the distribution as C<scripts/babel_info.pl>.
+
+In general the returned hash has the following structure:
+
+    $info = {
+        version     => $gpsbabel_version,
+        banner      => $gpsbabel_banner,
+        filters     => {
+            # big hash of filters
+        },
+        formats     => {
+            # big hash of formats
+        },
+        for_ext     => {
+            # hash mapping lower case extension name to a list
+            # of formats that use that extension
+        }
+    };
+
+The C<filters>, C<formats> and C<for_ext> hashes are only present if you have
+gpsbabel 1.2.8 or later installed.
 
 =item C<banner()>
 
+Get the GPSBabel banner string - the same string that is output by the command
+
+    $ gpsbabel -V
+
 =item C<version()>
+
+Get the GPSBabel version number. The version is extracted from the banner string.
+
+    print $babel->version(), "\n";
 
 =item C<got_ver( $ver )>
 
+Return true if the available version of gpsbabel is equal to or greater
+than the supplied version string. For example:
+
+    die "I need gpsbabel 1.3.0 or later\n"
+        unless $babel->got_ver('1.3.0');
+
 =item C<guess_format( $filename )>
+
+Given a filename return the name of the gpsbabel format that handles
+files of that type. Croaks with a suitable message if the format can't
+be identified from the extension. If more than one format matches an
+error listing all of the matching formats will be thrown.
+
+Optionally a format name may be supplied as the second argument in which
+case an error will be thrown if the installed gpsbabel doesn't support
+that format.
+
+Format guessing only works with gpsbabel 1.2.8 or later. As mentioned
+above, the requirement that an extension maps unambiguously to a format
+means that installing a later version of gpsbabel which adds support for
+another format that uses the same extension can cause code that used to
+work to stop working. For this reason format guessing should only be
+used in interactive programs that give the user the opportunity to
+specify a format explicitly if such an ambiguity exists.
 
 =item C<get_exename()>
 
+Get the name of the gpsbabel executable that will be used. This defaults
+to whatever File::Which::which('gpsbabel') returns. To use a particular
+gpsbabel binary either pass the path to the constructor using the
+'exename' option or call C<set_exename( $path )>.
+
 =item C<set_exename( $path )>
 
-=item C<read( $filename [, $format [, { $options } ] ] )>
+Set the path and name of the gpsbabel executable to use. The executable
+doesn't have to be called 'gpsbabel' - although naming any other program
+is unlikely to have pleasing results...
 
-=item C<write( $filename [, $format [, { $options } ] ] )>
+    $babel->set_exename('/sw/bin/gpsbabel');
+
+=item C<read( $filename [, { $options } ] )>
+
+=item C<write( $filename, $gpx_data [, { $options }] )>
 
 =item C<convert( $infile, $outfile, [, { $options } ] )>
 
 =item C<direct( @options )>
+
+Invoke gpsbabel with the supplied options. 
 
 =back
 
@@ -376,46 +561,31 @@ This document describes GPS::Babel version 0.0.1
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-  
 GPS::Babel requires no configuration files or environment variables.
+With the exception of C<direct()> all calls pass the argument -p '' to
+gpsbabel to inhibit reading of any inifile. See L<http://www.gpsbabel.org/htmldoc-
+1.3.2/inifile.html> for more details.
 
 =head1 DEPENDENCIES
 
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
+GPS::Babel needs gpsbabel, ideally installed on your PATH and ideally
+version 1.2.8 or later.
 
-None.
+In addition GPS::Babel requires the following Perl modules:
+
+    Geo::Gpx
+    File::Which
+    Class::Std
 
 =head1 INCOMPATIBILITIES
 
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
+GPS::Babel has only been tested with versions 1.3.0 and later of
+gpsbabel. It should work with earlier versions but it's advisable to
+upgrade to the latest version if possible. The gpsbabel developer
+community is extremely active so it's worth having the latest version
+installed.
 
 =head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
 
 No bugs have been reported.
 
@@ -426,6 +596,10 @@ L<http://rt.cpan.org>.
 =head1 AUTHOR
 
 Andy Armstrong  C<< <andy@hexten.net> >>
+
+Robert Lipe and numerous contributors did all the work by providing
+gpsbabel in the first place. This is just a wafer-thin layer on top of
+all their goodness.
 
 =head1 LICENCE AND COPYRIGHT
 
