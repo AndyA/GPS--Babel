@@ -7,8 +7,9 @@ use Geo::Gpx;
 use File::Which qw(which);
 use IO::Handle;
 use Class::Std;
+use Scalar::Util qw(blessed);
 
-use version; our $VERSION = qv('0.0.1');
+use version; our $VERSION = qv('0.0.2');
 
 my $EXENAME = 'gpsbabel';
 
@@ -317,7 +318,7 @@ sub write {
     my $opts = shift || { };
 
     croak "Must provide some data to output"
-        unless ref($gpx) && $gpx->can('xml');
+        unless blessed($gpx) && $gpx->can('xml');
         
     $opts->{in_format} = 'gpx';
 
@@ -339,7 +340,7 @@ GPS::Babel - Perl interface to gpsbabel
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.1
+This document describes GPS::Babel version 0.0.2
 
 =head1 SYNOPSIS
 
@@ -352,7 +353,7 @@ This document describes GPS::Babel version 0.0.1
 
     # Convert a file automatically choosing input and output
     # format based on extension
-    $babel->convert('points.wpt', 'points.gpx', { all => 1 });
+    $babel->convert('points.wpt', 'points.gpx');
     
     # Call gpsbabel directly
     $babel->direct(qw(gpsbabel -i saroute,split 
@@ -424,6 +425,13 @@ appropriate.
 =over
 
 =item C<new( { options } )>
+
+Create a new C<GPS::Babel> object. Optionally the exename option may
+be used to specify the full name of the gpsbabel executable
+
+    my $babel = GPS::Babel->new({ 
+        exename => 'C:\GPSBabel\gpsbabel.exe' 
+    });
 
 =item C<check_exe()>
 
@@ -527,13 +535,58 @@ is unlikely to have pleasing results...
 
 =item C<read( $filename [, { $options } ] )>
 
+Read a file in a format supported by gpsbabel into a C<Geo::Gpx> object.
+The input format is guessed from the filename unless supplied explicitly
+in the options like this
+
+    $data = $babel->read('hotels.wpt', { in_format => 'xmap' });
+
+See C<Geo::Gpx> for documentation on the returned object.
+
 =item C<write( $filename, $gpx_data [, { $options }] )>
+
+Write GPX data (typically in the form of an instance of C<Geo::Gpx>) to
+a file in one of the formats gpsbabel supports. C<$gpx_data> must be a
+reference to an object that exposes a method called C<xml> that returns
+a GPX document. C<Geo::Gpx> satisfies this requirement.
+
+The format will be guessed from the filename (see caveats above) or may
+be explicitly specified by passing a hash containing C<out_format> as
+the third argument:
+
+    $babsel->write('points.kml', $my_points, { out_format => 'kml' });
+
+For consistency the data is filtered through gpsbabel even if the desired
+output format is 'gpx'. If you will only be dealing with GPX files use
+C<Geo::Gpx> directly.
 
 =item C<convert( $infile, $outfile, [, { $options } ] )>
 
+Convert a file from one format to another. Both formats must be
+supported by gpsbabel.
+
+With no options C<convert> attempts to guess the input and output formats
+using C<guess_format> - see the caveats about that above. To specify the
+formats explicitly supply as a third argument a hash containing the keys
+C<in_format> and C<out_format> like this:
+
+    $babel->convert('infile.wpt', 'outfile.kml', 
+        { in_format => 'compegps', out_format => 'kml' });
+        
+gpsbabel treats waypoints, tracks and routes as separate channels of
+information and not all formats support reading and writing all three.
+C<convert> attempts to convert anything that can be both read by the
+input format and written by the output format. If the formats have
+nothing in common an error will be thrown.
+
 =item C<direct( @options )>
 
-Invoke gpsbabel with the supplied options. 
+Invoke gpsbabel with the supplied options. The supplied options are passed
+unmodified to system(), for example:
+
+    $babel->direct(qw(-i gpx -f somefile.gpx -o kml -F somefile.kml));
+
+Throws appropriate errors if gpsbabel fails.
 
 =back
 
@@ -547,15 +600,62 @@ Invoke gpsbabel with the supplied options.
 
 =over
 
-=item C<< Error message here, perhaps with %s placeholders >>
+=item C<< %s not found >>
 
-[Description of error here]
+Can't find the gpsbabel executable.
 
-=item C<< Another error message here >>
+=item C<< Missing filename >>
 
-[Description of error here]
+C<guess_format> (or a method that calls it) needs a filename from
+which to guess the format.
 
-[Et cetera, et cetera]
+=item C<< Unknown format "%s" >>
+
+An explicit format was passed to C<guess_format> that doesn't appear
+to be supported by the installed gpsbabel.
+
+=item C<< Filename "%s" has no extension >>
+
+Can't guess the format of a filename with no extension.
+
+=item C<< No format handles extension .%s >>
+
+The installed gpsbabel doesn't contain a format that explicitly supports
+the named extension. That doesn't necessarily mean that gpsbabel can't
+handle the file: many file formats use a number of different extensions
+and many gpsbabel input/output modules don't specify the extensions they
+support. If in doubt check the gpsbabel documentation and supply the
+format explicitly.
+
+=item C<< Multiple formats (%s) handle extension .%s >>
+
+C<guess_format> couldn't unambiguously guess the appropriate format
+from the extension. Check the gpsbabel documentation and supply an
+explicit format.
+
+=item C<< Must provide input and output filenames >>
+
+C<convert> needs input and output filenames.
+
+=item C<< Formats %s and %s have no read/write capabilities in common >>
+
+Some gpsbabel formats are read only, some are write only, some support only
+waypoints or only tracks. C<convert> couldn't find enough common ground
+between input and output formats to be able to convert any data.
+
+=item C<< %s failed with error %s >>
+
+A call to gpsbabel failed.
+
+=item C<< Must provide an input filename >>
+
+C<read> needs to know the name of the file to read.
+
+=item C<< Must provide some data to output >>
+
+C<write> needs data to output. The supplied object must expose a
+method called C<xml> that returns GPX data. Typically this is achieved
+by passing a C<Geo::Gpx>.
 
 =back
 
@@ -573,7 +673,7 @@ version 1.2.8 or later.
 
 In addition GPS::Babel requires the following Perl modules:
 
-    Geo::Gpx
+    Geo::Gpx (for read, write)
     File::Which
     Class::Std
 

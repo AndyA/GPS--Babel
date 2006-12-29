@@ -3,6 +3,7 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
+    (MM->can('signature_target') ? (SIGN => 1) : ()),
     NAME                => 'GPS::Babel',
     AUTHOR              => 'Andy Armstrong <andy@hexten.net>',
     VERSION_FROM        => 'lib/GPS/Babel.pm',

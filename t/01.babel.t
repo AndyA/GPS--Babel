@@ -14,7 +14,9 @@ unless (defined $exename) {
 
 plan tests => 1;
 
-my $info = $babel->get_info();
-warn Dumper($info);
+# Because the capabilities of this module depend almost entirely on the
+# installed version of gpsbabel it's hard to write a generic set of tests.
+# Once I think of a nice way of testing it I'll get back to you. In the
+# meantime please feel free to suggest some meaningful tests :)
 
 ok(1, 'All done');
