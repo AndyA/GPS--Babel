@@ -57,7 +57,14 @@ sub _with_babel {
     my @exe = $self->check_exe;
     my $exe_desc = "'" . join( "' '", @exe ) . "'";
 
-    open( my $fh, $mode, @exe, @{$opts} )
+    my @args = ( @exe, @{$opts} );
+    
+    if ($^O =~ /MSWin32/) {
+        # TODO: Need a better shell escape for Windows
+        @args = ( '"' . join('" "', @args) . '"' );
+    }
+
+    open( my $fh, $mode, @args )
       or die "Can't execute $exe_desc ($!)\n";
     $cb->( $fh );
     $fh->close or die "$exe_desc failed ($?)\n";
