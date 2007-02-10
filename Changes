@@ -8,3 +8,9 @@ Revision history for GPS-Babel
         
 0.0.3   2007-01-25
         Added missing dependencies.
+
+0.0.4   2007-02-10
+        Oops - didn't check the Geo::Gpx version in dependencies - hence this bug:
+            https://rt.cpan.org/Ticket/Display.html?id=24436
+        Added some tests using faked up system, which
+        

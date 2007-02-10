@@ -12,7 +12,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More'    => 0,
         'version'       => 0,
-        'Geo::Gpx'      => 0,
+        'Geo::Gpx'      => '0.15',
         'File::Which'   => 0,
         'Class::Std'    => 0,
     },

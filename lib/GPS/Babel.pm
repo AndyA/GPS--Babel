@@ -3,58 +3,58 @@ package GPS::Babel;
 use warnings;
 use strict;
 use Carp;
-use Geo::Gpx;
+use Geo::Gpx 0.15;
 use File::Which qw(which);
 use IO::Handle;
 use Class::Std;
 use Scalar::Util qw(blessed);
 
-use version; our $VERSION = qv('0.0.3');
+use version; our $VERSION = qv( '0.0.4' );
 
 my $EXENAME = 'gpsbabel';
 
-my %exepath :ATTR( :set<exename>, :get<exename> );
-my %info    :ATTR;
+my %exepath : ATTR( :set<exename>, :get<exename> );
+my %info : ATTR;
 
 sub BUILD {
-    my ($self, $id, $args) = @_;
+    my ( $self, $id, $args ) = @_;
 
-    $exepath{$id} = $args->{exename} || which($EXENAME);
-    $info{$id}    = undef;
+    $exepath{$id} = $args->{exename} || which( $EXENAME );
+    $info{$id} = undef;
 }
 
 sub check_exe {
     my $self = shift;
-    my $id   = ident($self);
+    my $id   = ident( $self );
 
     croak "$EXENAME not found"
-        unless defined($exepath{$id});
+      unless defined( $exepath{$id} );
 }
 
 sub _with_babel {
     my $self = shift;
-    my $id   = ident($self);
-    my ($mode, $opts, $cb) = @_;
+    my $id   = ident( $self );
+    my ( $mode, $opts, $cb ) = @_;
 
-    $self->check_exe();
-    warn(join(' ', $exepath{$id}, @{$opts}) . "\n");
-    open(my $fh, $mode, $exepath{$id}, @{$opts}) or die "Can't execute $exepath{$id} ($!)\n";
-    $cb->($fh);
-    $fh->close() or die "$exepath{$id} failed ($?)\n";
+    $self->check_exe;
+    open( my $fh, $mode, $exepath{$id}, @{$opts} )
+      or die "Can't execute $exepath{$id} ($!)\n";
+    $cb->( $fh );
+    $fh->close or die "$exepath{$id} failed ($?)\n";
 }
 
 sub _with_babel_reader {
     my $self = shift;
-    my ($opts, $cb) = @_;
-    
-    $self->_with_babel('-|', $opts, $cb);
+    my ( $opts, $cb ) = @_;
+
+    $self->_with_babel( '-|', $opts, $cb );
 }
 
 sub _with_babel_writer {
     my $self = shift;
-    my ($opts, $cb) = @_;
-    
-    $self->_with_babel('|-', $opts, $cb);
+    my ( $opts, $cb ) = @_;
+
+    $self->_with_babel( '|-', $opts, $cb );
 }
 
 sub _tidy {
@@ -67,268 +67,285 @@ sub _tidy {
 
 sub _find_info {
     my $self = shift;
-    my $id   = ident($self);
-    
+    my $id   = ident( $self );
+
     my $info = {
-        formats => { },
-        filters => { },
-        for_ext => { }
+        formats => {},
+        filters => {},
+        for_ext => {}
     };
 
     # Read the version
-    $self->_with_babel_reader(['-V'], sub {
-        my $fh = shift;
-        local $/; 
-        $info->{banner} = _tidy(<$fh>);
-    });
+    $self->_with_babel_reader(
+        ['-V'],
+        sub {
+            my $fh = shift;
+            local $/;
+            $info->{banner} = _tidy( <$fh> );
+        }
+    );
 
-    if ($info->{banner} =~ /([\d.]+)/) {
+    if ( $info->{banner} =~ /([\d.]+)/ ) {
         $info->{version} = $1;
     }
-    
+
     # -^3 and -%1 are 1.2.8 and later
-    if (_cmp_ver($info->{version}, '1.2.8') >= 0) {
+    if ( _cmp_ver( $info->{version}, '1.2.8' ) >= 0 ) {
+
         # File formats
-        $self->_with_babel_reader(['-^3'], sub {
-            my $fh = shift;
-            while (my $ln = <$fh>) {
-                chomp($ln);
-                my ($type, @f) = split(/\t/, $ln);
-                if ($type eq 'file') {
-                    my ($modes, $name, $ext, $desc, $parent) = @f;
-                    (my $nmodes = $modes) =~ tr/rw-/110/;
-                    $nmodes = oct('0b' . $nmodes);
-                    $info->{formats}->{$name} = {
-                        modes   => $modes,
-                        nmodes  => $nmodes,
-                        desc    => $desc,
-                        parent  => $parent
-                    };
-                    if ($ext) {
-                        $ext =~ s/^[.]//;   # At least one format has a stray '.'
-                        $ext = lc($ext);
-                        $info->{formats}->{$name}->{ext} = $ext;
-                        push @{$info->{for_ext}->{$ext}}, $name;
+        $self->_with_babel_reader(
+            ['-^3'],
+            sub {
+                my $fh = shift;
+                while ( my $ln = <$fh> ) {
+                    chomp( $ln );
+                    my ( $type, @f ) = split( /\t/, $ln );
+                    if ( $type eq 'file' ) {
+                        my ( $modes, $name, $ext, $desc, $parent ) = @f;
+                        ( my $nmodes = $modes ) =~ tr/rw-/110/;
+                        $nmodes = oct( '0b' . $nmodes );
+                        $info->{formats}->{$name} = {
+                            modes  => $modes,
+                            nmodes => $nmodes,
+                            desc   => $desc,
+                            parent => $parent
+                        };
+                        if ( $ext ) {
+                            $ext
+                              =~ s/^[.]//; # At least one format has a stray '.'
+                            $ext = lc( $ext );
+                            $info->{formats}->{$name}->{ext} = $ext;
+                            push @{ $info->{for_ext}->{$ext} }, $name;
+                        }
                     }
-                } elsif ($type eq 'option') {
-                    my ($fname, $name, $desc, $type, $default, $min, $max) = @f;
-                    $info->{formats}->{$fname}->{options}->{$name} = {
-                        desc    => $desc,
-                        type    => $type,
-                        default => $default || '',
-                        min     => $min     || '',
-                        max     => $max     || ''
-                    };
-                } else {
-                    # Something we don't know about - so ignore it
+                    elsif ( $type eq 'option' ) {
+                        my ( $fname, $name, $desc, $type, $default, $min, $max )
+                          = @f;
+                        $info->{formats}->{$fname}->{options}->{$name} = {
+                            desc    => $desc,
+                            type    => $type,
+                            default => $default || '',
+                            min     => $min || '',
+                            max     => $max || ''
+                        };
+                    }
+                    else {
+
+                        # Something we don't know about - so ignore it
+                    }
                 }
             }
-        });
-    
+        );
+
         # Filters
-        $self->_with_babel_reader(['-%1'], sub {
-            my $fh = shift;
-            while (my $ln = <$fh>) {
-                chomp($ln);
-                my ($name, @f) = split(/\t/, $ln);
-                if ($name eq 'option') {
-                    my ($fname, $oname, $desc, $type, @valid) = @f;
-                    $info->{filters}->{$fname}->{options}->{$oname} = {
-                        desc    => $desc,
-                        type    => $type,
-                        # Not exactly sure what this is
-                        valid   => [ @valid ]
-                    };
-                } else {
-                    $info->{filters}->{$name} = {
-                        desc    => $f[0]
-                    };
+        $self->_with_babel_reader(
+            ['-%1'],
+            sub {
+                my $fh = shift;
+                while ( my $ln = <$fh> ) {
+                    chomp( $ln );
+                    my ( $name, @f ) = split( /\t/, $ln );
+                    if ( $name eq 'option' ) {
+                        my ( $fname, $oname, $desc, $type, @valid ) = @f;
+                        $info->{filters}->{$fname}->{options}->{$oname} = {
+                            desc => $desc,
+                            type => $type,
+
+                            # Not exactly sure what this is
+                            valid => [@valid]
+                        };
+                    }
+                    else {
+                        $info->{filters}->{$name} = { desc => $f[0] };
+                    }
                 }
             }
-        });
+        );
     }
-    
+
     return $info;
 }
 
 sub get_info {
     my $self = shift;
-    my $id   = ident($self);
-    
-    return $info{$id} ||= $self->_find_info();
+    my $id   = ident( $self );
+
+    return $info{$id} ||= $self->_find_info;
 }
 
 sub banner {
     my $self = shift;
-    return $self->get_info()->{banner};
+    return $self->get_info->{banner};
 }
 
 sub version {
     my $self = shift;
-    return $self->get_info()->{version};
+    return $self->get_info->{version};
 }
 
 sub _cmp_ver {
-    my ($v1, $v2) = @_;
-    my @v1 = split(/[.]/, $v1);
-    my @v2 = split(/[.]/, $v2);
-    
-    while (@v1 && @v2) {
-        my $cmp = (shift @v1 <=> shift @v2);
+    my ( $v1, $v2 ) = @_;
+    my @v1 = split( /[.]/, $v1 );
+    my @v2 = split( /[.]/, $v2 );
+
+    while ( @v1 && @v2 ) {
+        my $cmp = ( shift @v1 <=> shift @v2 );
         return $cmp if $cmp;
     }
-    
+
     return @v1 <=> @v2;
 }
 
 sub got_ver {
     my $self = shift;
     my $need = shift;
-    my $got  = $self->version();
-    return _cmp_ver($got, $need) >= 0;
+    my $got  = $self->version;
+    return _cmp_ver( $got, $need ) >= 0;
 }
 
 sub guess_format {
     my $self = shift;
-    my $id   = ident($self);
+    my $id   = ident( $self );
     my $name = shift;
     my $dfmt = shift;
 
-    croak("Missing filename")
-        unless defined($name);
+    croak( "Missing filename" )
+      unless defined( $name );
 
-    my $info = $self->get_info();
+    my $info = $self->get_info;
 
     # Format specified
-    if (defined($dfmt)) {
-        croak("Unknown format \"$dfmt\"")
-            if exists($info->{formats}) && 
-               !exists($info->{formats}->{$dfmt});
+    if ( defined( $dfmt ) ) {
+        croak( "Unknown format \"$dfmt\"" )
+          if exists( $info->{formats} )
+          && !exists( $info->{formats}->{$dfmt} );
         return $dfmt;
     }
 
-    croak("Filename \"$name\" has no extension")
-        unless $name =~ /[.]([^.]+)$/;
-        
-    my $ext  = lc($1);
-    my $fmt  = $info->{for_ext}->{$ext};
-    
-    croak("No format handles extension .$ext")
-        unless defined($fmt);
+    croak( "Filename \"$name\" has no extension" )
+      unless $name =~ /[.]([^.]+)$/;
 
-    my @fmt  = sort @{$fmt};
+    my $ext = lc( $1 );
+    my $fmt = $info->{for_ext}->{$ext};
+
+    croak( "No format handles extension .$ext" )
+      unless defined( $fmt );
+
+    my @fmt = sort @{$fmt};
 
     return $fmt[0] if @fmt == 1;
 
     my $last = pop @fmt;
-    my $list = join(' and ', join(', ', @fmt), $last);
+    my $list = join( ' and ', join( ', ', @fmt ), $last );
 
-    croak("Multiple formats ($list) handle extension .$ext");
+    croak( "Multiple formats ($list) handle extension .$ext" );
 }
 
 sub _convert_opts {
-    my $self   = shift;
-    my $id     = ident($self);
-    my $inf    = shift;
-    my $outf   = shift;
-    my $opts   = shift || { };
+    my $self = shift;
+    my $id   = ident( $self );
+    my $inf  = shift;
+    my $outf = shift;
+    my $opts = shift || {};
 
     croak "Must provide input and output filenames"
-        unless defined($outf);
-    
-    my $infmt  = $self->guess_format($inf,  $opts->{in_format});
-    my $outfmt = $self->guess_format($outf, $opts->{out_format});
+      unless defined( $outf );
 
-    my $info   = $self->get_info();
+    my $infmt  = $self->guess_format( $inf,  $opts->{in_format} );
+    my $outfmt = $self->guess_format( $outf, $opts->{out_format} );
 
-    my $inmd   = $info->{formats}->{$infmt}->{nmodes};
-    my $outmd  = $info->{formats}->{$outfmt}->{nmodes};
-    
+    my $info = $self->get_info;
+
+    my $inmd  = $info->{formats}->{$infmt}->{nmodes};
+    my $outmd = $info->{formats}->{$outfmt}->{nmodes};
+
     # Work out which modes can be read by the input format /and/ written by
     # the output format.
-    my $canmd  = ($inmd >> 1) & $outmd;
+    my $canmd = ( $inmd >> 1 ) & $outmd;
 
-    my @proc = ( );
-    push @proc, '-r' if ($canmd & 0x01);
-    push @proc, '-t' if ($canmd & 0x04);
-    push @proc, '-w' if ($canmd & 0x10);
-    
+    my @proc = ();
+    push @proc, '-r' if ( $canmd & 0x01 );
+    push @proc, '-t' if ( $canmd & 0x04 );
+    push @proc, '-w' if ( $canmd & 0x10 );
+
     croak "Formats $infmt and $outfmt have no read/write capabilities in common"
-        unless @proc;
-    
-    my @opts = (
-        '-p', '',
-        @proc,
-        '-i', $infmt,  '-f', $inf,
-        '-o', $outfmt, '-F', $outf
-    );
+      unless @proc;
+
+    my @opts = ( '-p', '', @proc, '-i', $infmt, '-f', $inf, '-o', $outfmt, '-F',
+        $outf );
 
     return @opts;
 }
 
 sub convert {
-    my $self   = shift;
-    my $id     = ident($self);
+    my $self = shift;
+    my $id   = ident( $self );
 
-    my @opts   = $self->_convert_opts(@_);
-    
-    $self->direct(@opts);
+    my @opts = $self->_convert_opts( @_ );
+
+    $self->direct( @opts );
 }
 
 sub direct {
-    my $self   = shift;
-    my $id     = ident($self);
-    
-    $self->check_exe();
-    warn(join(' ', $exepath{$id}, @_) . "\n");
-    if (system($exepath{$id}, @_)) {
-        croak("$EXENAME failed with error " . (($? == -1) ? $! : $?));
+    my $self = shift;
+    my $id   = ident( $self );
+
+    $self->check_exe;
+    warn( join( ' ', $exepath{$id}, @_ ) . "\n" );
+    if ( system( $exepath{$id}, @_ ) ) {
+        croak( "$EXENAME failed with error " . ( ( $? == -1 ) ? $! : $? ) );
     }
 }
 
 sub read {
     my $self = shift;
-    my $id   = ident($self);
+    my $id   = ident( $self );
     my $inf  = shift;
-    my $opts = shift || { };
+    my $opts = shift || {};
 
     require Geo::Gpx;
 
     croak "Must provide an input filename"
-        unless defined($inf);
+      unless defined( $inf );
 
     $opts->{out_format} = 'gpx';
-    
-    my @opts = $self->_convert_opts($inf, '-', $opts);
+
+    my @opts = $self->_convert_opts( $inf, '-', $opts );
     my $gpx = undef;
 
-    $self->_with_babel_reader(\@opts, sub {
-        my $fh = shift;
-        $gpx = Geo::Gpx->new(input => $fh);
-    });
-    
+    $self->_with_babel_reader(
+        \@opts,
+        sub {
+            my $fh = shift;
+            $gpx = Geo::Gpx->new( input => $fh );
+        }
+    );
+
     return $gpx;
 }
 
 sub write {
     my $self = shift;
-    my $id   = ident($self);
+    my $id   = ident( $self );
     my $outf = shift;
     my $gpx  = shift;
-    my $opts = shift || { };
+    my $opts = shift || {};
 
     croak "Must provide some data to output"
-        unless blessed($gpx) && $gpx->can('xml');
-        
+      unless blessed( $gpx ) && $gpx->can( 'xml' );
+
     $opts->{in_format} = 'gpx';
 
-    my $xml = $gpx->xml();
-    
-    my @opts = $self->_convert_opts('-', $outf, $opts);
-    $self->_with_babel_writer(\@opts, sub {
-        my $fh = shift;
-        $fh->print($xml);
-    });
+    my $xml = $gpx->xml;
+
+    my @opts = $self->_convert_opts( '-', $outf, $opts );
+    $self->_with_babel_writer(
+        \@opts,
+        sub {
+            my $fh = shift;
+            $fh->print( $xml );
+        }
+    );
 }
 
 1;
@@ -340,7 +357,7 @@ GPS::Babel - Perl interface to gpsbabel
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.3
+This document describes GPS::Babel version 0.0.4
 
 =head1 SYNOPSIS
 
