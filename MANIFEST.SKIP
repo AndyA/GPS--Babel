@@ -1,0 +1,16 @@
+\.tmproj$
+\.tar\.gz$
+\B\.svn\b
+
+# Makemaker generated files and dirs.
+^MANIFEST\.
+^Makefile$
+^andy/
+^blib/
+^pm_to_blib$
+
+# Temp, old and emacs backup files.
+~$
+\.(old|tmp|bak)$
+^#.*#$
+^\.#

@@ -13,22 +13,40 @@ use version; our $VERSION = qv( '0.0.4' );
 
 my $EXENAME = 'gpsbabel';
 
-my %exepath : ATTR( :set<exename>, :get<exename> );
+my %exepath : ATTR;
 my %info : ATTR;
 
 sub BUILD {
     my ( $self, $id, $args ) = @_;
 
-    $exepath{$id} = $args->{exename} || which( $EXENAME );
-    $info{$id} = undef;
+    if ( exists $args->{exename} ) {
+        my $exename = delete $args->{exename};
+        $exename = [$exename] unless ref $exename eq 'ARRAY';
+        $self->set_exename( @$exename );
+    }
+    else {
+        $self->set_exename( which( $EXENAME ) || () );
+    }
+}
+
+sub get_exename {
+    my $self = shift;
+    my $id   = ident( $self );
+    return @{ $exepath{$id} };
+}
+
+sub set_exename {
+    my $self = shift;
+    my $id   = ident( $self );
+    $exepath{$id} = [@_];
 }
 
 sub check_exe {
     my $self = shift;
-    my $id   = ident( $self );
 
-    croak "$EXENAME not found"
-      unless defined( $exepath{$id} );
+    my @exe = $self->get_exename;
+    croak "$EXENAME not found" unless @exe;
+    return @exe;
 }
 
 sub _with_babel {
@@ -36,11 +54,13 @@ sub _with_babel {
     my $id   = ident( $self );
     my ( $mode, $opts, $cb ) = @_;
 
-    $self->check_exe;
-    open( my $fh, $mode, $exepath{$id}, @{$opts} )
-      or die "Can't execute $exepath{$id} ($!)\n";
+    my @exe = $self->check_exe;
+    my $exe_desc = "'" . join( "' '", @exe ) . "'";
+
+    open( my $fh, $mode, @exe, @{$opts} )
+      or die "Can't execute $exe_desc ($!)\n";
     $cb->( $fh );
-    $fh->close or die "$exepath{$id} failed ($?)\n";
+    $fh->close or die "$exe_desc failed ($?)\n";
 }
 
 sub _with_babel_reader {
@@ -59,6 +79,7 @@ sub _with_babel_writer {
 
 sub _tidy {
     my $str = shift;
+    $str = '' unless defined $str;
     $str =~ s/^\s+//;
     $str =~ s/\s+$//;
     $str =~ s/\s+/ /g;
@@ -87,6 +108,9 @@ sub _find_info {
 
     if ( $info->{banner} =~ /([\d.]+)/ ) {
         $info->{version} = $1;
+    }
+    else {
+        $info->{version} = '0.0.0';
     }
 
     # -^3 and -%1 are 1.2.8 and later
@@ -217,8 +241,7 @@ sub guess_format {
     # Format specified
     if ( defined( $dfmt ) ) {
         croak( "Unknown format \"$dfmt\"" )
-          if exists( $info->{formats} )
-          && !exists( $info->{formats}->{$dfmt} );
+          if %{ $info->{formats} } && !exists( $info->{formats}->{$dfmt} );
         return $dfmt;
     }
 
@@ -256,8 +279,8 @@ sub _convert_opts {
 
     my $info = $self->get_info;
 
-    my $inmd  = $info->{formats}->{$infmt}->{nmodes};
-    my $outmd = $info->{formats}->{$outfmt}->{nmodes};
+    my $inmd  = $info->{formats}->{$infmt}->{nmodes} || 0b111111;
+    my $outmd = $info->{formats}->{$outfmt}->{nmodes} || 0b111111;
 
     # Work out which modes can be read by the input format /and/ written by
     # the output format.
@@ -290,9 +313,7 @@ sub direct {
     my $self = shift;
     my $id   = ident( $self );
 
-    $self->check_exe;
-    warn( join( ' ', $exepath{$id}, @_ ) . "\n" );
-    if ( system( $exepath{$id}, @_ ) ) {
+    if ( system( $self->check_exe, @_ ) ) {
         croak( "$EXENAME failed with error " . ( ( $? == -1 ) ? $! : $? ) );
     }
 }
