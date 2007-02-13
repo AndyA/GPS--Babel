@@ -60,8 +60,8 @@ sub _with_babel {
     my @args = ( @exe, @{$opts} );
     
     if ($^O =~ /MSWin32/) {
-        # TODO: Need a better shell escape for Windows
-        @args = ( '"' . join('" "', @args) . '"' );
+        # Windows: shell escape and collapse to a single string
+        @args = ( '"' . join('" "', map { s/"/""/g } @args) . '"' );
     }
 
     open( my $fh, $mode, @args )
