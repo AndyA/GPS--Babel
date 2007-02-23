@@ -9,7 +9,7 @@ use IO::Handle;
 use Class::Std;
 use Scalar::Util qw(blessed);
 
-use version; our $VERSION = qv( '0.0.4' );
+use version; our $VERSION = qv( '0.0.7' );
 
 my $EXENAME = 'gpsbabel';
 
@@ -58,7 +58,7 @@ sub _with_babel {
     my $exe_desc = "'" . join( "' '", @exe ) . "'";
 
     my @args = ( @exe, @{$opts} );
-    
+
     if ($^O =~ /MSWin32/) {
         # Windows: shell escape and collapse to a single string
         @args = ( '"' . join('" "', map { s/"/""/g } @args) . '"' );
@@ -385,23 +385,23 @@ GPS::Babel - Perl interface to gpsbabel
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.0.4
+This document describes GPS::Babel version 0.0.7
 
 =head1 SYNOPSIS
 
     use GPS::Babel;
 
     my $babel = GPS::Babel->new();
-    
+
     # Read an OZIExplorer file into a data structure
     my $data  = $babel->read('route.ozi', 'ozi');
 
     # Convert a file automatically choosing input and output
     # format based on extension
     $babel->convert('points.wpt', 'points.gpx');
-    
+
     # Call gpsbabel directly
-    $babel->direct(qw(gpsbabel -i saroute,split 
+    $babel->direct(qw(gpsbabel -i saroute,split
         -f in.anr -f in2.anr -o an1,type=road -F out.an1));
 
 =head1 DESCRIPTION
@@ -435,7 +435,7 @@ enumerate the options they accept. This information is available as a
 perl data structure which may be used to construct a dynamic user
 interface that reflects the options available from the gpsbabel binary.
 
-=head2 Format Guessing 
+=head2 Format Guessing
 
 C<GPS::Babel> queries the capabilities of C<gpsbabel> and can use this
 information to automatically choose input and output formats based on
@@ -465,7 +465,7 @@ should make the choice of filter explicit by passing C<in_format> and/or
 C<out_format> options to C<read>, C<write> and C<convert> as
 appropriate.
 
-=head1 INTERFACE 
+=head1 INTERFACE
 
 =over
 
@@ -474,8 +474,8 @@ appropriate.
 Create a new C<GPS::Babel> object. Optionally the exename option may
 be used to specify the full name of the gpsbabel executable
 
-    my $babel = GPS::Babel->new({ 
-        exename => 'C:\GPSBabel\gpsbabel.exe' 
+    my $babel = GPS::Babel->new({
+        exename => 'C:\GPSBabel\gpsbabel.exe'
     });
 
 =item C<check_exe()>
@@ -615,9 +615,9 @@ using C<guess_format> - see the caveats about that above. To specify the
 formats explicitly supply as a third argument a hash containing the keys
 C<in_format> and C<out_format> like this:
 
-    $babel->convert('infile.wpt', 'outfile.kml', 
+    $babel->convert('infile.wpt', 'outfile.kml',
         { in_format => 'compegps', out_format => 'kml' });
-        
+
 gpsbabel treats waypoints, tracks and routes as separate channels of
 information and not all formats support reading and writing all three.
 C<convert> attempts to convert anything that can be both read by the

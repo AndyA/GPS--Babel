@@ -11,7 +11,7 @@ my $name     = undef;
 while ( <DATA> ) {
     chomp;
     next if /^\s*$/;
-    if ( /^=(\S+)/ ) {
+    if ( /^!(\S+)/ ) {
         $name = $1;
     }
     elsif ( defined $name ) {
@@ -69,7 +69,7 @@ exit $exit;
 
 __DATA__
 
-=formats
+!formats
 
 internal\trw----\txcsv\t\t? Character Separated Values\txcsv
 option\txcsv\tstyle\tFull path to XCSV style file\tfile\t\t\t
@@ -525,7 +525,7 @@ option\twbt\terase\tErase device data after download\tboolean\t0\t\t
 file\tr-----\tyahoo\t\tYahoo Geocode API data\tyahoo
 option\tyahoo\taddrsep\tString to separate concatenated address fields (default=", ")\tstring\t, \t\t
 
-=filters
+!filters
 
 polygon\tInclude Only Points Inside Polygon
 option\tpolygon\tfile\tFile containing vertices of polygon\tfile\t\t\t

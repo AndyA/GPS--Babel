@@ -12,5 +12,14 @@ Revision history for GPS-Babel
 0.0.4   2007-02-10
         Oops - didn't check the Geo::Gpx version in dependencies - hence this bug:
             https://rt.cpan.org/Ticket/Display.html?id=24436
-        Added some tests using faked up system, which
-        
+        Added some tests using faked up system.
+
+0.0.5   2007-02-23
+        Added machine readable licence.
+
+0.0.6   2007-02-23
+        Fixed minor pod formatting issues.
+
+0.0.7   2007-02-23
+        Fixed pod errors caused by use of '=' as a section delimiter for
+        test data.
