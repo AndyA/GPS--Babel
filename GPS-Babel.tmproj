@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Changes</string>
+	<string>lib/GPS/Babel.pm</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -223,6 +223,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{19, 47}, {1008, 773}}</string>
+	<string>{{180, 62}, {1028, 942}}</string>
 </dict>
 </plist>
