@@ -23,3 +23,10 @@ Revision history for GPS-Babel
 0.0.7   2007-02-23
         Fixed pod errors caused by use of '=' as a section delimiter for
         test data.
+
+0.10    2007-11-24
+        Stopped using version.pm.
+        Stopped using Class::Std.
+        Added support for 1.3.5 extended info.
+        Added t/30.live.t - a first attempt at testing against a
+        live gpsbabel.
