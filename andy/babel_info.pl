@@ -12,4 +12,4 @@ use Data::Dumper;
 $| = 1;
 
 my $babel = GPS::Babel->new();
-print Dumper($babel->get_info());
+print Dumper( $babel->get_info() );

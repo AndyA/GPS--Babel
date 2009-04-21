@@ -9,22 +9,22 @@ $| = 1;
 my %response = ();
 my $name     = undef;
 while ( <DATA> ) {
-    chomp;
-    next if /^\s*$/;
-    if ( /^!(\S+)/ ) {
-        $name = $1;
-    }
-    elsif ( defined $name ) {
-        s/\\t/\t/g;
-        $response{$name} .= "$_\n";
-    }
+  chomp;
+  next if /^\s*$/;
+  if ( /^!(\S+)/ ) {
+    $name = $1;
+  }
+  elsif ( defined $name ) {
+    s/\\t/\t/g;
+    $response{$name} .= "$_\n";
+  }
 }
 
 #warn join( ' ', @ARGV ), "\n";
 my $dump = shift;
 my $verb = shift;
 defined( my $exit = shift )
-  or die "fake-babel <dump file> <verb> <exit_code> <babel args>\n";
+ or die "fake-babel <dump file> <verb> <exit_code> <babel args>\n";
 
 # Dump our args where the test can find them
 open my $dh, '>', $dump or die "Can't write $dump\n";
@@ -32,46 +32,46 @@ print $dh Data::Dumper->Dump( [ \@ARGV ], ['$args'] );
 close $dh;
 
 my %personality = (
-    'bork' => sub {
-    },
-    '1.2.5' => sub {
-        if ( $ARGV[0] eq '-V' ) {
-            print "\nGPSBabel Version 1.2.5\n\n";
-        }
-    },
-    '1.3.0' => sub {
-        if ( $ARGV[0] eq '-V' ) {
-            print "\nGPSBabel Version 1.3.0\n\n";
-        }
-        elsif ( $ARGV[0] eq '-%1' ) {
-            print $response{filters};
-        }
-        elsif ( $ARGV[0] eq '-^3' ) {
-            print $response{formats};
-        }
-    },
-    '1.3.3' => sub {
-        if ( $ARGV[0] eq '-V' ) {
-            print "\nGPSBabel Version 1.3.3 -beta20061125\n\n";
-        }
-        elsif ( $ARGV[0] eq '-%1' ) {
-            print $response{filters};
-        }
-        elsif ( $ARGV[0] eq '-^3' ) {
-            print $response{formats};
-        }
-    },
-    '1.3.5' => sub {
-        if ( $ARGV[0] eq '-V' ) {
-            print "\nGPSBabel Version 1.3.5-beta20070807\n\n";
-        }
-        elsif ( $ARGV[0] eq '-%1' ) {
-            print $response{filters135};
-        }
-        elsif ( $ARGV[0] eq '-^3' ) {
-            print $response{formats135};
-        }
-    },
+  'bork' => sub {
+  },
+  '1.2.5' => sub {
+    if ( $ARGV[0] eq '-V' ) {
+      print "\nGPSBabel Version 1.2.5\n\n";
+    }
+  },
+  '1.3.0' => sub {
+    if ( $ARGV[0] eq '-V' ) {
+      print "\nGPSBabel Version 1.3.0\n\n";
+    }
+    elsif ( $ARGV[0] eq '-%1' ) {
+      print $response{filters};
+    }
+    elsif ( $ARGV[0] eq '-^3' ) {
+      print $response{formats};
+    }
+  },
+  '1.3.3' => sub {
+    if ( $ARGV[0] eq '-V' ) {
+      print "\nGPSBabel Version 1.3.3 -beta20061125\n\n";
+    }
+    elsif ( $ARGV[0] eq '-%1' ) {
+      print $response{filters};
+    }
+    elsif ( $ARGV[0] eq '-^3' ) {
+      print $response{formats};
+    }
+  },
+  '1.3.5' => sub {
+    if ( $ARGV[0] eq '-V' ) {
+      print "\nGPSBabel Version 1.3.5-beta20070807\n\n";
+    }
+    elsif ( $ARGV[0] eq '-%1' ) {
+      print $response{filters135};
+    }
+    elsif ( $ARGV[0] eq '-^3' ) {
+      print $response{formats135};
+    }
+  },
 );
 
 my $action = $personality{$verb} or die "Verb $verb not known\n";
