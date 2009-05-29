@@ -17,7 +17,7 @@ my $builder = MyBuilder->new(
     'Test::More'  => 0,
   },
   PL_files           => {},
-  add_to_cleanup     => [ 'GPS-Babel-*' ],
+  add_to_cleanup     => ['GPS-Babel-*'],
   sign               => 1,
   license            => 'perl',
   create_readme      => 1,
