@@ -12,3 +12,4 @@ t/30.live.t
 t/fake-babel.pl
 t/pod-coverage.t
 t/pod.t
+Makefile.PL

@@ -31,5 +31,7 @@ Revision history for GPS-Babel
         Added t/30.live.t - a first attempt at testing against a
         live gpsbabel.
 
-0.11    2007-11-24
+0.11    2009-05-29
         Added t/30.live.t to MANIFEST. Oops.
+        Move to GitHub.
+        Switch from EUMM to MB.
