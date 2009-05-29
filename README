@@ -2,7 +2,7 @@ NAME
     GPS::Babel - Perl interface to gpsbabel
 
 VERSION
-    This document describes GPS::Babel version 0.11
+    This document describes GPS::Babel version 0.12
 
 SYNOPSIS
         use GPS::Babel;

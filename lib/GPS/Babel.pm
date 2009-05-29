@@ -8,7 +8,7 @@ use File::Which qw(which);
 use IO::Handle;
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 my $EXENAME = 'gpsbabel';
 
@@ -407,7 +407,7 @@ GPS::Babel - Perl interface to gpsbabel
 
 =head1 VERSION
 
-This document describes GPS::Babel version 0.11
+This document describes GPS::Babel version 0.12
 
 =head1 SYNOPSIS
 
